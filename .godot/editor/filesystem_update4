@@ -1,0 +1,8 @@
+res://Scenes/level 1.tscn
+res://enemy.gd
+res://player.gd
+res://Scenes/player.tscn
+res://enemy.tscn
+res://Scenes/elments Scens/key.tscn
+res://Scenes/elments Scens/ExitDoor.tscn
+res://battery_pickup.tscn

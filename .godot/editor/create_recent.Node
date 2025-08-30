@@ -1,0 +1,12 @@
+CollisionShape2D
+Node2D
+Area2D
+Label
+ColorRect
+PointLight2D
+AnimatedSprite2D
+TextureRect
+CanvasLayer
+CharacterBody2D
+TileMapLayer
+Camera2D

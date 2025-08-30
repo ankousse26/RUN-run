@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbf26dkp3e63v"]
+
+[ext_resource type="Script" uid="uid://bc1klv5c7ovty" path="res://Scenes/elments Scens/EXIT DOOR.gd" id="1_tj268"]
+[ext_resource type="Texture2D" uid="uid://cxbq6ve4ybqrm" path="res://assets/env/Layer 20.png" id="2_r7ol1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ahoqh"]
+size = Vector2(61.5, 47)
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(0, 1)
+script = ExtResource("1_tj268")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(1.25, -0.5)
+shape = SubResource("RectangleShape2D_ahoqh")
+
+[node name="Door" type="Sprite2D" parent="."]
+position = Vector2(0, 1)
+texture = ExtResource("2_r7ol1")
+region_enabled = true
+region_rect = Rect2(6.91891, 86.2321, 47.8784, 48.5313)
+
+[node name="Label" type="Label" parent="."]
+offset_left = -20.0
+offset_top = -45.0
+offset_right = 20.0
+offset_bottom = -22.0

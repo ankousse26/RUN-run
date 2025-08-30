@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://cp5ycbv6cw06f"]
+
+[ext_resource type="Script" uid="uid://umskreqwk1c3" path="res://Scenes/elments Scens/key.gd" id="1_coxau"]
+[ext_resource type="Texture2D" uid="uid://cxbq6ve4ybqrm" path="res://assets/env/Layer 20.png" id="1_xm0ow"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_l4kgf"]
+
+[node name="Key" type="Node2D"]
+
+[node name="Area2D" type="Area2D" parent="."]
+script = ExtResource("1_coxau")
+
+[node name="pickup area" type="CollisionShape2D" parent="Area2D"]
+scale = Vector2(1.88, 1.36)
+shape = SubResource("CircleShape2D_l4kgf")
+
+[node name="key" type="Sprite2D" parent="Area2D"]
+position = Vector2(1, -1)
+texture = ExtResource("1_xm0ow")
+region_enabled = true
+region_rect = Rect2(38.6159, 49.3026, 33.8314, 18.0039)
