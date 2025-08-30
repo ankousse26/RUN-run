@@ -1,7 +1,5 @@
-res://Scenes/level 1.tscn
-res://enemy.gd
-res://player.gd
 res://Scenes/player.tscn
+res://Scenes/level 1.tscn
 res://enemy.tscn
 res://Scenes/elments Scens/key.tscn
 res://Scenes/elments Scens/ExitDoor.tscn
