@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://dvnucepnaql6q"]
+
+[ext_resource type="Script" uid="uid://du6st45auoh6m" path="res://box.gd" id="1_bqn3j"]
+[ext_resource type="Texture2D" uid="uid://swe5n4883ad6" path="res://assets/env/Layer 12.png" id="1_g2tbl"]
+[ext_resource type="Texture2D" uid="uid://c436w5ypypm2x" path="res://assets/Characters/shadow2.png" id="2_oq5cr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bqn3j"]
+size = Vector2(27, 21)
+
+[node name="Box" type="RigidBody2D"]
+position = Vector2(1, 0)
+collision_layer = 15
+collision_mask = 15
+script = ExtResource("1_bqn3j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, -0.5)
+shape = SubResource("RectangleShape2D_bqn3j")
+
+[node name="box tux" type="Sprite2D" parent="."]
+texture = ExtResource("1_g2tbl")
+region_enabled = true
+region_rect = Rect2(4.39178, 68.9445, 28.7013, 22.7823)
+
+[node name="Shadow2" type="Sprite2D" parent="box tux"]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(0, 1)
+scale = Vector2(2.25, 1.72937)
+texture = ExtResource("2_oq5cr")

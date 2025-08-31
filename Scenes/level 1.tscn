@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://do0ugn3rey8xx"]
+[gd_scene load_steps=12 format=4 uid="uid://do0ugn3rey8xx"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_jer6a"]
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="2_dqf42"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/elments Scens/ExitDoor.tscn" id="6_bex1k"]
 [ext_resource type="PackedScene" uid="uid://bmqo7o1fg6gem" path="res://battery_pickup.tscn" id="7_4ff0u"]
 [ext_resource type="Texture2D" uid="uid://bq3sdvd0dv48n" path="res://assets/Characters/light and battery.png" id="8_ayjtp"]
+[ext_resource type="PackedScene" uid="uid://dvnucepnaql6q" path="res://box.tscn" id="9_ayjtp"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_auim0"]
 texture = ExtResource("1_jer6a")
@@ -107,3 +108,6 @@ position = Vector2(718, 322)
 texture = ExtResource("8_ayjtp")
 region_enabled = true
 region_rect = Rect2(25.419, 4.11713, 14.8513, 19.6339)
+
+[node name="Box" parent="." instance=ExtResource("9_ayjtp")]
+position = Vector2(1016, 314)

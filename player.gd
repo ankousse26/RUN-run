@@ -5,6 +5,10 @@ extends CharacterBody2D
 @export var acceleration: float = 1500.0
 @export var friction: float = 1200.0
 
+# Pushing settings - NEW
+@export var push_force: float = 400.0
+@export var push_slowdown_factor: float = 0.7  # Player moves 70% speed when pushing
+
 # Key collection system
 @export var keys_needed_to_escape: int = 1
 var collected_keys: Array[String] = []
@@ -55,6 +59,10 @@ var is_dying: bool = false
 var is_knocked_back: bool = false
 var knockback_velocity: Vector2 = Vector2.ZERO
 var can_exit: bool = false
+
+# Pushing variables - NEW
+var is_pushing: bool = false
+var pushed_objects: Array = []
 
 # Signals
 signal health_changed(new_health)
@@ -147,6 +155,9 @@ func _physics_process(delta):
 	handle_input(delta)
 	handle_animation()
 	move_and_slide()
+	
+	# Handle pushing objects - NEW
+	handle_object_pushing()
 	
 	# Handle flashlight battery
 	handle_flashlight(delta)
@@ -316,16 +327,60 @@ func handle_input(delta):
 		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, friction * 2 * delta)
 		is_moving = false
 	else:
-		# Normal movement
+		# Normal movement with pushing consideration - UPDATED
 		if input_dir.length() > 0:
 			input_dir = input_dir.normalized()
-			velocity = velocity.move_toward(input_dir * speed, acceleration * delta)
+			
+			# Adjust speed if pushing objects
+			var movement_speed = speed
+			if is_pushing:
+				movement_speed *= push_slowdown_factor
+				print("Player pushing - speed reduced to ", movement_speed)
+			
+			velocity = velocity.move_toward(input_dir * movement_speed, acceleration * delta)
 			is_moving = true
 		else:
 			velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 			is_moving = velocity.length() > 5.0
 
-# FIXED: Animation logic now checks flashlight state for Walk LIGHT
+# NEW: Handle pushing objects in ALL 4 directions (top-down)
+func handle_object_pushing():
+	is_pushing = false
+	pushed_objects.clear()
+	
+	# Check for collisions with pushable objects
+	for i in get_slide_collision_count():
+		var collision = get_slide_collision(i)
+		var collider = collision.get_collider()
+		
+		if collider and collider.is_in_group("pushable"):
+			is_pushing = true
+			pushed_objects.append(collider)
+			
+			# Calculate push direction based on player's movement direction
+			var push_direction = velocity.normalized()
+			
+			# Only push if player is actually moving
+			if velocity.length() > 50:
+				if collider.has_method("push"):
+					collider.push(push_direction, push_force, self)
+					
+					# Debug: Show which direction we're pushing
+					var direction_name = ""
+					if abs(push_direction.x) > abs(push_direction.y):
+						if push_direction.x > 0:
+							direction_name = "RIGHT"
+						else:
+							direction_name = "LEFT"
+					else:
+						if push_direction.y > 0:
+							direction_name = "DOWN"
+						else:
+							direction_name = "UP"
+					
+					print("Pushing ", collider.name, " ", direction_name, " - Direction: ", push_direction)
+
+# FIXED: Animation logic - pushing works with regular walking animations
 func handle_animation():
 	if not animated_sprite or is_dying:
 		return
@@ -334,14 +389,26 @@ func handle_animation():
 		return
 		
 	if is_moving:
-		# FIXED: Check flashlight state for Walk LIGHT animation
+		# Choose animation based on state - no special push animation needed
+		var walk_anim = "Walk"
+		
+		# Priority 1: Walk LIGHT when flashlight is on (works while pushing too)
 		if flashlight_on and animated_sprite.sprite_frames.has_animation("Walk LIGHT"):
-			if animated_sprite.animation != "Walk LIGHT":
-				animated_sprite.play("Walk LIGHT")
+			walk_anim = "Walk LIGHT"
+			if is_pushing:
+				print("Playing Walk LIGHT animation while pushing box!")
+			else:
 				print("Playing Walk LIGHT animation!")
+		# Priority 2: Normal walk (works for pushing too)
 		elif animated_sprite.sprite_frames.has_animation("Walk"):
-			if animated_sprite.animation != "Walk":
-				animated_sprite.play("Walk")
+			walk_anim = "Walk"
+			if is_pushing:
+				print("Playing Walk animation while pushing box!")
+		
+		# Play the chosen animation
+		if animated_sprite.sprite_frames.has_animation(walk_anim):
+			if animated_sprite.animation != walk_anim:
+				animated_sprite.play(walk_anim)
 	else:
 		# Idle animation (unchanged)
 		if animated_sprite.sprite_frames.has_animation("Idel"):

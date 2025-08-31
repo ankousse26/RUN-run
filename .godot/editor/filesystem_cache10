@@ -1,16 +1,18 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1756589833
+::res://::1756667492
 Battery Pickup.gd::GDScript/GDScript::4794782825787037613::1756502560::0::1::::<>Area2D<><>0<>0<><>::
-battery_pickup.tscn::PackedScene::3262624810446370724::1756589324::0::1::::<><><>0<>0<><>::uid://bq3sdvd0dv48n::::res://assets/Characters/light and battery.png<>uid://cakvmw0h0alrp::::res://Battery Pickup.gd
-enemy.gd::GDScript::3769864925193257180::1756589316::0::1::::<>CharacterBody2D<><>0<>0<><>::
-enemy.tscn::PackedScene::167985568555702597::1756589324::0::1::::<><><>0<>0<><>::uid://cor7nwmpsnpsa::::res://assets/Characters/enemy/enemy-idel.png<>uid://btyfeh7w73q1i::::res://enemy.gd<>uid://bisbb01ux44tn::::res://assets/Characters/enemy/enemy-Crazy walk.png<>uid://b0ki81ti5sb7j::::res://assets/Characters/shadow.png
+battery_pickup.tscn::PackedScene/PackedScene::3262624810446370724::1756589839::0::1::::<><><>0<>0<><>::uid://bq3sdvd0dv48n::::res://assets/Characters/light and battery.png<>uid://cakvmw0h0alrp::::res://Battery Pickup.gd
+enemy.gd::GDScript/GDScript::3769864925193257180::1756589316::0::1::::<>CharacterBody2D<><>0<>0<><>::
+enemy.tscn::PackedScene/PackedScene::167985568555702597::1756589839::0::1::::<><><>0<>0<><>::uid://cor7nwmpsnpsa::::res://assets/Characters/enemy/enemy-idel.png<>uid://btyfeh7w73q1i::::res://enemy.gd<>uid://bisbb01ux44tn::::res://assets/Characters/enemy/enemy-Crazy walk.png<>uid://b0ki81ti5sb7j::::res://assets/Characters/shadow.png
 icon.svg::CompressedTexture2D/CompressedTexture2D::107998305422597951::1755459511::1755459517::1::::<><><>0<>0<>2824a1a4fd025ed72be6fb51590a2b4f<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
-player.gd::GDScript::3693033135359716806::1756587543::0::1::::<>CharacterBody2D<><>0<>0<><>::
+player.gd::GDScript/GDScript::3693033135359716806::1756587543::0::1::::<>CharacterBody2D<><>0<>0<><>::
+box.tscn::PackedScene::8661282823580669370::1756667492::0::1::::<><><>0<>0<><>::uid://swe5n4883ad6::::res://assets/env/Layer 12.png
 ::res://assets/::1756589450
-::res://assets/Characters/::1756589450
+::res://assets/Characters/::1756667736
 light 1 polish.png::CompressedTexture2D/CompressedTexture2D::150626286565095768::1756503740::1756503758::1::::<><><>0<>0<>55b3b9c2c420bcf969750ff3acd42fbf<>res://.godot/imported/light 1 polish.png-36394e6c549b410553d1983d22ca7624.ctex::
 light and battery.png::CompressedTexture2D/CompressedTexture2D::3568344131032324891::1756502428::1756502431::1::::<><><>0<>0<>2b103bae1cfd4971c47fec0c44b3a25b<>res://.godot/imported/light and battery.png-bbf37db3e825b5c036042068c60c2c69.ctex::
 light player.png::CompressedTexture2D/CompressedTexture2D::341566917230123770::1756503756::1756503758::1::::<><><>0<>0<>845890ed66f9749bc2b849591c9454b0<>res://.godot/imported/light player.png-1826b7f135f8ad0820d9ee4a6b8a6f84.ctex::
+shadow2.png::CompressedTexture2D::6868043537734501173::1756667736::1756667740::1::::<><><>0<>0<>9aea4e4cf442c5e97de716b4bd2c5dfa<>res://.godot/imported/shadow2.png-1811e17674843c3039b0a8764126a6b8.ctex::
 shadow.png::CompressedTexture2D/CompressedTexture2D::4162331614688172541::1756232952::1756232964::1::::<><><>0<>0<>330931e1fee755976c92c6317d76cdb7<>res://.godot/imported/shadow.png-d4bd0383e0a8ca15d05cd9e9e2f448c3.ctex::
 ::res://assets/Characters/enemy/::1756589450
 enemy-Crazy walk.png::CompressedTexture2D/CompressedTexture2D::2985154089346394079::1755205365::1755460896::1::::<><><>0<>0<>ff01e403840215a276041c6941a14954<>res://.godot/imported/enemy-Crazy walk.png-22fd9fa72d7c4ae736318702e8c5f653.ctex::
@@ -35,12 +37,12 @@ Layer 21.png::CompressedTexture2D/CompressedTexture2D::7385061986801977384::1756
 Layer 22.png::CompressedTexture2D/CompressedTexture2D::7700986874576496266::1756254671::1756254676::1::::<><><>0<>0<>f5238a237cfe28bb9f79bbc55c68e194<>res://.godot/imported/Layer 22.png-459b0d6314cdb952db35183da6138754.ctex::
 Layer 23 copy 2.png::CompressedTexture2D/CompressedTexture2D::1049376619210100883::1756254518::1756254524::1::::<><><>0<>0<>c6c0fbd4efc350940f4ee95008d520ba<>res://.godot/imported/Layer 23 copy 2.png-8575048ae9ceba5cd44695b4c485ee5e.ctex::
 ui back.png::CompressedTexture2D/CompressedTexture2D::932023234936148046::1755460964::1755460994::1::::<><><>0<>0<>d22f3ec4c3b891365046ef43f5d7c003<>res://.godot/imported/ui back.png-0b5fa7734b24440891c4934d8620bcff.ctex::
-::res://Scenes/::1756589451
-level 1.tscn::PackedScene::8194741087318814921::1756589324::0::1::::<><><>0<>0<><>::uid://cx32oallnwaao::::res://assets/env/tilest.png<>uid://xh6w7jeco6tn::::res://assets/env/back.png<>uid://csts38tpqne8b::::res://Scenes/player.tscn<>uid://cnmxyvgwn2ib::::res://enemy.tscn<>uid://cp5ycbv6cw06f::::res://Scenes/elments Scens/key.tscn<>uid://bbf26dkp3e63v::::res://Scenes/elments Scens/ExitDoor.tscn<>uid://bmqo7o1fg6gem::::res://battery_pickup.tscn<>uid://bq3sdvd0dv48n::::res://assets/Characters/light and battery.png
-player.tscn::PackedScene::6076608401622322299::1756589438::0::1::::<><><>0<>0<><>::uid://bsu6yl5002ro5::::res://player.gd<>uid://b4svysp5yiep1::::res://assets/Characters/The hero/Hero-walk.png<>uid://ch8m6rfgnrmig::::res://assets/Characters/The hero/Hero-Dead.png<>uid://c10v7q5s0xfgo::::res://assets/Characters/The hero/Hero-damaged.png<>uid://5ejgxfheq0c7::::res://assets/Characters/The hero/Hero-walk WITH LIGHT.png<>uid://11s2nsieimr3::::res://assets/Characters/The hero/Hero-idel.png<>uid://b0ki81ti5sb7j::::res://assets/Characters/shadow.png<>uid://ddhm5ldi8yuno::::res://assets/ui/Layer 21.png<>uid://e4ps7fdpw3ri::::res://assets/Characters/light player.png<>uid://o7lcyax0q8ex::::res://assets/ui/Layer 23 copy 2.png<>uid://dhyoem1jd364e::::res://assets/ui/Layer 22.png
-::res://Scenes/elments Scens/::1756589451
+::res://Scenes/::1756591707
+level 1.tscn::PackedScene/PackedScene::8194741087318814921::1756589839::0::1::::<><><>0<>0<><>::uid://cx32oallnwaao::::res://assets/env/tilest.png<>uid://xh6w7jeco6tn::::res://assets/env/back.png<>uid://csts38tpqne8b::::res://Scenes/player.tscn<>uid://cnmxyvgwn2ib::::res://enemy.tscn<>uid://cp5ycbv6cw06f::::res://Scenes/elments Scens/key.tscn<>uid://bbf26dkp3e63v::::res://Scenes/elments Scens/ExitDoor.tscn<>uid://bmqo7o1fg6gem::::res://battery_pickup.tscn<>uid://bq3sdvd0dv48n::::res://assets/Characters/light and battery.png
+player.tscn::PackedScene/PackedScene::6076608401622322299::1756591707::0::1::::<><><>0<>0<><>::uid://bsu6yl5002ro5::::res://player.gd<>uid://b4svysp5yiep1::::res://assets/Characters/The hero/Hero-walk.png<>uid://ch8m6rfgnrmig::::res://assets/Characters/The hero/Hero-Dead.png<>uid://c10v7q5s0xfgo::::res://assets/Characters/The hero/Hero-damaged.png<>uid://5ejgxfheq0c7::::res://assets/Characters/The hero/Hero-walk WITH LIGHT.png<>uid://11s2nsieimr3::::res://assets/Characters/The hero/Hero-idel.png<>uid://b0ki81ti5sb7j::::res://assets/Characters/shadow.png<>uid://ddhm5ldi8yuno::::res://assets/ui/Layer 21.png<>uid://e4ps7fdpw3ri::::res://assets/Characters/light player.png<>uid://o7lcyax0q8ex::::res://assets/ui/Layer 23 copy 2.png<>uid://dhyoem1jd364e::::res://assets/ui/Layer 22.png
+::res://Scenes/elments Scens/::1756589839
 EXIT DOOR.gd::GDScript/GDScript::2581100155704032802::1756332677::0::1::::<>Area2D<><>0<>0<><>::
-ExitDoor.tscn::PackedScene::2468626308254416009::1756589324::0::1::::<><><>0<>0<><>::uid://bc1klv5c7ovty::::res://Scenes/elments Scens/EXIT DOOR.gd<>uid://cxbq6ve4ybqrm::::res://assets/env/Layer 20.png
+ExitDoor.tscn::PackedScene/PackedScene::2468626308254416009::1756589839::0::1::::<><><>0<>0<><>::uid://bc1klv5c7ovty::::res://Scenes/elments Scens/EXIT DOOR.gd<>uid://cxbq6ve4ybqrm::::res://assets/env/Layer 20.png
 key.gd::GDScript/GDScript::1429661069451169784::1756501369::0::1::::<>Area2D<><>0<>0<><>::
-key.tscn::PackedScene::5889066220368994423::1756589324::0::1::::<><><>0<>0<><>::uid://umskreqwk1c3::::res://Scenes/elments Scens/key.gd<>uid://cxbq6ve4ybqrm::::res://assets/env/Layer 20.png
+key.tscn::PackedScene/PackedScene::5889066220368994423::1756589839::0::1::::<><><>0<>0<><>::uid://umskreqwk1c3::::res://Scenes/elments Scens/key.gd<>uid://cxbq6ve4ybqrm::::res://assets/env/Layer 20.png
 ::res://Script/::1755460685
