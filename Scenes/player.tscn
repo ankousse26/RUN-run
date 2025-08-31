@@ -238,7 +238,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f1ek2"]
-size = Vector2(20, 31)
+size = Vector2(20, 24)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gymyn"]
 radius = 95.0053
@@ -325,7 +325,7 @@ autoplay = "Idel"
 frame_progress = 0.712687
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 10.5)
+position = Vector2(0, 14)
 shape = SubResource("RectangleShape2D_f1ek2")
 
 [node name="Shadow" type="Sprite2D" parent="."]

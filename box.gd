@@ -1,45 +1,39 @@
 extends RigidBody2D
 
-@export var push_responsiveness: float = 1.0
-@export var friction_strength: float = 15.0
-@export var max_speed: float = 200.0
+@export var friction_strength: float = 12.0
+@export var max_speed: float = 180.0
 
 func _ready():
 	add_to_group("pushable")
 	
-	# Configure RigidBody2D for classic box behavior
-	gravity_scale = 0  # No gravity in top-down
-	linear_damp = 8.0  # Natural slowdown
-	angular_damp = 20.0  # Prevent spinning
-	lock_rotation = true  # Keep box upright
-	continuous_cd = RigidBody2D.CCD_MODE_CAST_RAY  # Prevent tunneling through walls
+	# Godot 4.4.1 settings
+	gravity_scale = 0
+	linear_damp = 6.0
+	angular_damp = 20.0
+	lock_rotation = true
 	
-	print("Pushable box ready: ", name)
-
-func push_box(direction: Vector2, force: float):
-	# Apply push force in the specified direction
-	var push_force = direction * force * push_responsiveness
-	apply_central_impulse(push_force)
+	# In Godot 4, freeze properties work differently
+	# By default, nothing is frozen, so we don't need to set anything
+	# If you want to be explicit:
+	freeze = false
+	freeze_mode = RigidBody2D.FREEZE_MODE_STATIC
 	
-	# Limit speed
-	if linear_velocity.length() > max_speed:
-		linear_velocity = linear_velocity.normalized() * max_speed
+	# Enable collision
+	collision_layer = 8  # Layer 4
+	collision_mask = 1   # Layer 1
 	
-	# Debug
-	var direction_name = ""
-	if abs(direction.x) > abs(direction.y):
-		direction_name = "RIGHT" if direction.x > 0 else "LEFT"
-	else:
-		direction_name = "DOWN" if direction.y > 0 else "UP"
-	
-	print("Box pushed ", direction_name, " with force ", force)
+	print("Box ready for push/pull: ", name)
 
 func _physics_process(delta):
 	# Apply extra friction when moving slowly
-	if linear_velocity.length() < 50 and linear_velocity.length() > 5:
+	if linear_velocity.length() < 40 and linear_velocity.length() > 5:
 		var friction_force = -linear_velocity.normalized() * friction_strength
 		apply_central_force(friction_force)
 	
 	# Stop very slow movement
 	if linear_velocity.length() < 5:
 		linear_velocity = Vector2.ZERO
+	
+	# Limit maximum speed
+	if linear_velocity.length() > max_speed:
+		linear_velocity = linear_velocity.normalized() * max_speed

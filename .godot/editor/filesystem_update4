@@ -1,9 +1,9 @@
 res://box.tscn
-res://box.gd
-res://player.gd
-res://Scenes/level 1.tscn
 res://Scenes/player.tscn
+res://Scenes/level 1.tscn
 res://enemy.tscn
 res://Scenes/elments Scens/key.tscn
 res://Scenes/elments Scens/ExitDoor.tscn
 res://battery_pickup.tscn
+res://box.gd
+res://player.gd

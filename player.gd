@@ -5,9 +5,10 @@ extends CharacterBody2D
 @export var acceleration: float = 1500.0
 @export var friction: float = 1200.0
 
-# Pushing settings - NEW
-@export var push_force: float = 400.0
-@export var push_slowdown_factor: float = 0.7  # Player moves 70% speed when pushing
+# Push/Pull settings
+@export var push_pull_force: float = 600.0
+@export var push_pull_speed: float = 150.0  # Slower speed when pushing/pulling
+@export var interaction_distance: float = 80.0  # Increased from 40 - How close to be to interact with box
 
 # Key collection system
 @export var keys_needed_to_escape: int = 1
@@ -31,7 +32,6 @@ var collected_keys: Array[String] = []
 @export var max_battery: float = 100.0
 @export var battery_drain_rate: float = 15.0
 @export var flashlight_detection_range: float = 200.0
-@export var flashlight_cone_angle: float = 60.0  # Degrees
 
 # Flashlight references
 @onready var flashlight_light = $PointLight2D
@@ -60,9 +60,11 @@ var is_knocked_back: bool = false
 var knockback_velocity: Vector2 = Vector2.ZERO
 var can_exit: bool = false
 
-# Pushing variables - NEW
+# Push/Pull variables
+var is_push_pull_mode: bool = false
+var target_box: RigidBody2D = null
 var is_pushing: bool = false
-var pushed_objects: Array = []
+var is_pulling: bool = false
 
 # Signals
 signal health_changed(new_health)
@@ -70,7 +72,7 @@ signal player_died
 
 func _ready():
 	add_to_group("player")
-	print("Player ready!")
+	print("Player ready with manual push/pull system!")
 	
 	# Initialize health
 	current_health = max_health
@@ -81,8 +83,20 @@ func _ready():
 	setup_flashlight()
 	update_battery_ui()
 	
-	# Debug check UI elements
 	check_ui_elements()
+	
+	# Debug pushable objects after everything loads
+	call_deferred("debug_pushable_objects")
+
+func debug_pushable_objects():
+	await get_tree().process_frame  # Wait one frame for everything to initialize
+	var pushable_objects = get_tree().get_nodes_in_group("pushable")
+	print("=== PUSHABLE OBJECTS DEBUG ===")
+	print("Total pushable objects: ", pushable_objects.size())
+	for obj in pushable_objects:
+		print("- ", obj.name, " at position: ", obj.global_position)
+		var distance = global_position.distance_to(obj.global_position)
+		print("  Distance from player: ", distance)
 
 func check_ui_elements():
 	print("=== UI Elements Check ===")
@@ -104,13 +118,12 @@ func setup_flashlight():
 		flashlight_area.monitoring = true
 		flashlight_area.monitorable = true
 	
-	# Configure PointLight2D - FIXED FOR GODOT 4
+	# Configure PointLight2D for Godot 4
 	if flashlight_light:
 		flashlight_light.enabled = false
 		flashlight_light.energy = 3.0
-		flashlight_light.texture_scale = 2.0  # FIXED: Godot 4 uses texture_scale instead of range
+		flashlight_light.texture_scale = 2.0
 		flashlight_light.color = Color.WHITE
-		flashlight_light.position = Vector2(0, -10)
 		
 		# Create light texture if missing
 		if not flashlight_light.texture:
@@ -124,7 +137,6 @@ func setup_flashlight():
 			gradient_texture.width = 256
 			gradient_texture.height = 256
 			flashlight_light.texture = gradient_texture
-			print("Created flashlight texture")
 	
 	# Setup detection area shape
 	setup_flashlight_detection_shape()
@@ -153,11 +165,9 @@ func _physics_process(delta):
 		return
 		
 	handle_input(delta)
+	handle_push_pull_system()
 	handle_animation()
 	move_and_slide()
-	
-	# Handle pushing objects - NEW
-	handle_object_pushing()
 	
 	# Handle flashlight battery
 	handle_flashlight(delta)
@@ -167,26 +177,191 @@ func _physics_process(delta):
 		update_flashlight_direction()
 
 func _input(event):
-	# Exit with B key (Space)
+	# Exit with Space key
 	if Input.is_action_just_pressed("EXIT"):
 		attempt_exit()
 	
 	# Collect with E key
 	if Input.is_action_just_pressed("COLLECT"):
-		# This can be used for item collection if needed
 		pass
 	
 	# Toggle flashlight with F key
 	if event is InputEventKey and event.keycode == KEY_F and event.pressed and not event.echo and not is_dead and not is_dying:
 		toggle_flashlight()
-		print("F key pressed - toggling flashlight")
 	
-	# Debug keys (using number keys to avoid conflicts)
+	# Push/Pull mode with B key - IMPROVED FEATURE
+	if event is InputEventKey and event.keycode == KEY_B and not is_dead and not is_dying:
+		if event.pressed and not event.echo:
+			start_push_pull_mode()
+		elif not event.pressed:
+			stop_push_pull_mode()
+	
+	# Debug keys
 	if event is InputEventKey && event.keycode == KEY_1 && event.pressed && !event.echo:
 		debug_take_damage()
 	
 	if event is InputEventKey && event.keycode == KEY_2 && event.pressed && !event.echo:
 		debug_heal()
+
+func start_push_pull_mode():
+	# Find nearest box
+	target_box = find_nearest_box()
+	
+	if target_box:
+		is_push_pull_mode = true
+		print("Push/Pull mode activated - Target: ", target_box.name)
+		print("Use WASD to push/pull the box")
+		
+		# Visual feedback - make box slightly bright
+		if target_box.has_node("Sprite2D"):
+			var sprite = target_box.get_node("Sprite2D")
+			sprite.modulate = Color(1.2, 1.2, 1.0)  # Slight yellow tint
+		# Try ColorRect if Sprite2D doesn't exist
+		elif target_box.has_node("ColorRect"):
+			var sprite = target_box.get_node("ColorRect")
+			sprite.modulate = Color(1.2, 1.2, 1.0)
+		# Try RenderingServer for visual feedback if no sprite found
+		elif target_box.has_method("set_modulate"):
+			target_box.modulate = Color(1.2, 1.2, 1.0)
+	else:
+		print("No box nearby to push/pull (within ", interaction_distance, " units)")
+		# Show all pushable objects for debugging
+		var all_pushable = get_tree().get_nodes_in_group("pushable")
+		print("All pushable objects in scene: ", all_pushable.size())
+		for obj in all_pushable:
+			if obj is RigidBody2D:
+				var dist = global_position.distance_to(obj.global_position)
+				print("  - ", obj.name, " at distance: ", dist)
+
+func stop_push_pull_mode():
+	if is_push_pull_mode:
+		is_push_pull_mode = false
+		is_pushing = false
+		is_pulling = false
+		
+		# Remove visual feedback
+		if target_box:
+			if target_box.has_node("Sprite2D"):
+				var sprite = target_box.get_node("Sprite2D")
+				sprite.modulate = Color.WHITE
+			elif target_box.has_node("ColorRect"):
+				var sprite = target_box.get_node("ColorRect")
+				sprite.modulate = Color.WHITE
+			elif target_box.has_method("set_modulate"):
+				target_box.modulate = Color.WHITE
+		
+		target_box = null
+		print("Push/Pull mode deactivated")
+
+func find_nearest_box() -> RigidBody2D:
+	var nearest_box: RigidBody2D = null
+	var nearest_distance: float = interaction_distance
+	
+	# Get all bodies in the pushable group
+	var boxes = get_tree().get_nodes_in_group("pushable")
+	print("Found ", boxes.size(), " pushable objects in scene")
+	
+	for box in boxes:
+		if box is RigidBody2D:
+			var distance = global_position.distance_to(box.global_position)
+			print("Box '", box.name, "' distance: ", distance)
+			
+			if distance <= interaction_distance:
+				if nearest_box == null or distance < nearest_distance:
+					nearest_distance = distance
+					nearest_box = box
+					print("Set as nearest box: ", box.name)
+	
+	if nearest_box:
+		print("Selected nearest box: ", nearest_box.name, " at distance: ", nearest_distance)
+	else:
+		print("No pushable boxes found within range of ", interaction_distance)
+	
+	return nearest_box
+
+func handle_push_pull_system():
+	is_pushing = false
+	is_pulling = false
+	
+	if not is_push_pull_mode or not target_box:
+		return
+	
+	# Check if box is still in range
+	var distance_to_box = global_position.distance_to(target_box.global_position)
+	if distance_to_box > interaction_distance * 2.0:  # Increased range tolerance
+		print("Box too far away - exiting push/pull mode")
+		stop_push_pull_mode()
+		return
+	
+	# Get input direction
+	var input_direction = Vector2.ZERO
+	if Input.is_action_pressed("move_left") or Input.is_action_pressed("ui_left"):
+		input_direction.x -= 1
+	if Input.is_action_pressed("move_right") or Input.is_action_pressed("ui_right"):
+		input_direction.x += 1
+	if Input.is_action_pressed("move_up") or Input.is_action_pressed("ui_up"):
+		input_direction.y -= 1
+	if Input.is_action_pressed("move_down") or Input.is_action_pressed("ui_down"):
+		input_direction.y += 1
+	
+	if input_direction.length() > 0:
+		input_direction = input_direction.normalized()
+		
+		# Apply force to the box using apply_central_force (continuous force, not impulse)
+		var force_to_apply = input_direction * push_pull_force
+		target_box.apply_central_force(force_to_apply)
+		
+		# Determine if we're conceptually pushing or pulling for animation/feedback
+		var direction_to_box = (target_box.global_position - global_position).normalized()
+		var dot_product = input_direction.dot(direction_to_box)
+		
+		if dot_product > 0.1:  # Moving toward box direction
+			is_pulling = true
+			print("PULLING box ", get_direction_name(input_direction))
+		else:  # Moving in other directions
+			is_pushing = true
+			print("PUSHING box ", get_direction_name(input_direction))
+
+func get_direction_name(direction: Vector2) -> String:
+	if abs(direction.x) > abs(direction.y):
+		return "RIGHT" if direction.x > 0 else "LEFT"
+	else:
+		return "DOWN" if direction.y > 0 else "UP"
+
+func handle_input(delta):
+	var input_dir = Vector2.ZERO
+	
+	# Don't allow input during knockback
+	if not is_knocked_back:
+		if Input.is_action_pressed("move_left") or Input.is_action_pressed("ui_left"):
+			input_dir.x -= 1
+		if Input.is_action_pressed("move_right") or Input.is_action_pressed("ui_right"):
+			input_dir.x += 1
+		if Input.is_action_pressed("move_up") or Input.is_action_pressed("ui_up"):
+			input_dir.y -= 1
+		if Input.is_action_pressed("move_down") or Input.is_action_pressed("ui_down"):
+			input_dir.y += 1
+	
+	# Handle knockback with smooth decay
+	if is_knocked_back:
+		velocity = knockback_velocity
+		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, friction * 2 * delta)
+		is_moving = false
+	else:
+		# Normal movement
+		if input_dir.length() > 0:
+			input_dir = input_dir.normalized()
+			
+			# Use slower speed in push/pull mode
+			var movement_speed = speed
+			if is_push_pull_mode:
+				movement_speed = push_pull_speed
+			
+			velocity = velocity.move_toward(input_dir * movement_speed, acceleration * delta)
+			is_moving = true
+		else:
+			velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+			is_moving = velocity.length() > 5.0
 
 func toggle_flashlight():
 	if not flashlight_enabled:
@@ -265,14 +440,12 @@ func _on_flashlight_area_entered(body):
 		enemies_in_light.append(body)
 		if body.has_method("enter_light"):
 			body.enter_light()
-			print("Enemy entered light: ", body.name)
 
 func _on_flashlight_area_exited(body):
 	if body.is_in_group("enemy") and body in enemies_in_light:
 		enemies_in_light.erase(body)
 		if body.has_method("exit_light"):
 			body.exit_light()
-			print("Enemy exited light: ", body.name)
 
 func add_battery(amount: float):
 	current_battery = min(current_battery + amount, max_battery)
@@ -285,11 +458,38 @@ func get_battery_percentage() -> float:
 func get_flashlight_state() -> bool:
 	return flashlight_on and current_battery > 0
 
-func get_flashlight_direction() -> Vector2:
-	if flashlight_light:
-		return Vector2(cos(flashlight_light.rotation), sin(flashlight_light.rotation))
-	return Vector2.RIGHT
+func handle_animation():
+	if not animated_sprite or is_dying:
+		return
+	
+	if not animated_sprite.sprite_frames:
+		return
+		
+	if is_moving:
+		# Choose animation based on state
+		var walk_anim = "Walk"
+		
+		# Priority 1: Walk LIGHT when flashlight is on
+		if flashlight_on and animated_sprite.sprite_frames.has_animation("Walk LIGHT"):
+			walk_anim = "Walk LIGHT"
+		# Priority 2: Regular walk
+		elif animated_sprite.sprite_frames.has_animation("Walk"):
+			walk_anim = "Walk"
+		
+		# Play the animation
+		if animated_sprite.sprite_frames.has_animation(walk_anim):
+			if animated_sprite.animation != walk_anim:
+				animated_sprite.play(walk_anim)
+	else:
+		# Idle animation
+		if animated_sprite.sprite_frames.has_animation("Idel"):
+			if animated_sprite.animation != "Idel":
+				animated_sprite.play("Idel")
+		elif animated_sprite.sprite_frames.has_animation("idle"):
+			if animated_sprite.animation != "idle":
+				animated_sprite.play("idle")
 
+# Keep all your existing functions (health, combat, etc.)
 func attempt_exit():
 	if can_exit and can_escape():
 		print("Player escaped successfully!")
@@ -307,193 +507,13 @@ func trigger_escape():
 		get_tree().reload_current_scene()
 	)
 
-func handle_input(delta):
-	var input_dir = Vector2.ZERO
-	
-	# Don't allow input during knockback
-	if not is_knocked_back:
-		if Input.is_action_pressed("move_left") or Input.is_action_pressed("ui_left"):
-			input_dir.x -= 1
-		if Input.is_action_pressed("move_right") or Input.is_action_pressed("ui_right"):
-			input_dir.x += 1
-		if Input.is_action_pressed("move_up") or Input.is_action_pressed("ui_up"):
-			input_dir.y -= 1
-		if Input.is_action_pressed("move_down") or Input.is_action_pressed("ui_down"):
-			input_dir.y += 1
-	
-	# Handle knockback with smooth decay
-	if is_knocked_back:
-		velocity = knockback_velocity
-		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, friction * 2 * delta)
-		is_moving = false
-	else:
-		# Normal movement with pushing consideration - UPDATED
-		if input_dir.length() > 0:
-			input_dir = input_dir.normalized()
-			
-			# Adjust speed if pushing objects
-			var movement_speed = speed
-			if is_pushing:
-				movement_speed *= push_slowdown_factor
-				print("Player pushing - speed reduced to ", movement_speed)
-			
-			velocity = velocity.move_toward(input_dir * movement_speed, acceleration * delta)
-			is_moving = true
-		else:
-			velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
-			is_moving = velocity.length() > 5.0
-
-# NEW: Handle pushing objects in ALL 4 directions (top-down)
-func handle_object_pushing():
-	is_pushing = false
-	pushed_objects.clear()
-	
-	# Check for collisions with pushable objects
-	for i in get_slide_collision_count():
-		var collision = get_slide_collision(i)
-		var collider = collision.get_collider()
-		
-		if collider and collider.is_in_group("pushable"):
-			is_pushing = true
-			pushed_objects.append(collider)
-			
-			# Calculate push direction based on player's movement direction
-			var push_direction = velocity.normalized()
-			
-			# Only push if player is actually moving
-			if velocity.length() > 50:
-				if collider.has_method("push"):
-					collider.push(push_direction, push_force, self)
-					
-					# Debug: Show which direction we're pushing
-					var direction_name = ""
-					if abs(push_direction.x) > abs(push_direction.y):
-						if push_direction.x > 0:
-							direction_name = "RIGHT"
-						else:
-							direction_name = "LEFT"
-					else:
-						if push_direction.y > 0:
-							direction_name = "DOWN"
-						else:
-							direction_name = "UP"
-					
-					print("Pushing ", collider.name, " ", direction_name, " - Direction: ", push_direction)
-
-# FIXED: Animation logic - pushing works with regular walking animations
-func handle_animation():
-	if not animated_sprite or is_dying:
-		return
-	
-	if not animated_sprite.sprite_frames:
-		return
-		
-	if is_moving:
-		# Choose animation based on state - no special push animation needed
-		var walk_anim = "Walk"
-		
-		# Priority 1: Walk LIGHT when flashlight is on (works while pushing too)
-		if flashlight_on and animated_sprite.sprite_frames.has_animation("Walk LIGHT"):
-			walk_anim = "Walk LIGHT"
-			if is_pushing:
-				print("Playing Walk LIGHT animation while pushing box!")
-			else:
-				print("Playing Walk LIGHT animation!")
-		# Priority 2: Normal walk (works for pushing too)
-		elif animated_sprite.sprite_frames.has_animation("Walk"):
-			walk_anim = "Walk"
-			if is_pushing:
-				print("Playing Walk animation while pushing box!")
-		
-		# Play the chosen animation
-		if animated_sprite.sprite_frames.has_animation(walk_anim):
-			if animated_sprite.animation != walk_anim:
-				animated_sprite.play(walk_anim)
-	else:
-		# Idle animation (unchanged)
-		if animated_sprite.sprite_frames.has_animation("Idel"):
-			if animated_sprite.animation != "Idel":
-				animated_sprite.play("Idel")
-		elif animated_sprite.sprite_frames.has_animation("idle"):
-			if animated_sprite.animation != "idle":
-				animated_sprite.play("idle")
-
-func update_health_ui():
-	# Update health bar with proper sizing
-	if health_ui:
-		var health_percentage = float(current_health) / float(max_health)
-		health_ui.size.x = health_bar_max_width * health_percentage
-		
-		# Red color with varying intensity
-		var red_intensity = lerp(0.7, 1.0, health_percentage)
-		health_ui.color = Color(red_intensity, 0, 0, 1.0)
-		
-		print("Health bar updated: ", health_percentage * 100, "% - Width: ", health_ui.size.x)
-	else:
-		print("ERROR: Health UI not found!")
-	
-	# Update health text
-	if health_label:
-		health_label.text = str(current_health) + "/" + str(max_health)
-		
-		# Change text color when critical
-		var health_percentage = float(current_health) / float(max_health)
-		if health_percentage <= 0.25:
-			health_label.add_theme_color_override("font_color", Color.RED)
-		else:
-			health_label.add_theme_color_override("font_color", Color.WHITE)
-	else:
-		print("ERROR: Health Label not found!")
-	
-	# Update character portrait animation
-	update_character_portrait()
-
-func update_character_portrait():
-	if not character_portrait:
-		print("ERROR: No character portrait found!")
-		return
-		
-	if not character_portrait.sprite_frames:
-		print("ERROR: No sprite frames on character portrait!")
-		return
-	
-	var available_anims = character_portrait.sprite_frames.get_animation_names()
-	
-	print("Health: ", current_health, "/", max_health)
-	print("Is invincible: ", is_invincible)
-	
-	# Animation logic: crying during invincibility, normal when safe
-	if is_invincible:
-		# Show crying animation during invincibility (recently damaged)
-		if character_portrait.sprite_frames.has_animation("crying"):
-			if character_portrait.animation != "crying":
-				print("Switching to crying animation - player recently damaged")
-				character_portrait.play("crying")
-		else:
-			print("ERROR: 'crying' animation not found!")
-			print("Available animations: ", available_anims)
-	else:
-		# Show normal animation when not invincible (safe period)
-		if character_portrait.sprite_frames.has_animation("normal"):
-			if character_portrait.animation != "normal":
-				print("Switching to normal animation - player recovered")
-				character_portrait.play("normal") 
-		else:
-			print("ERROR: 'normal' animation not found!")
-			print("Available animations: ", available_anims)
-
-# Key Collection System
 func collect_key(key_id: String):
 	if key_id in collected_keys:
-		return  # Already have this key
+		return
 		
 	collected_keys.append(key_id)
 	print("Collected key: ", key_id, " (", collected_keys.size(), "/", keys_needed_to_escape, ")")
-	
-	# Update UI
 	update_key_ui()
-	
-	# Check if can escape
 	check_escape_condition()
 
 func update_key_ui():
@@ -503,19 +523,12 @@ func update_key_ui():
 func check_escape_condition():
 	if collected_keys.size() >= keys_needed_to_escape:
 		print("All keys collected! Exit is now available!")
-		# Notify exit door or enable escape
-		var exit_doors = get_tree().get_nodes_in_group("exit_door")
-		for door in exit_doors:
-			if door.has_method("enable_exit"):
-				door.enable_exit()
 
 func can_escape() -> bool:
 	return collected_keys.size() >= keys_needed_to_escape
 
-# Combat System
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 	if is_invincible or is_dead or is_dying:
-		print("Damage blocked - invincible:", is_invincible, " dead:", is_dead, " dying:", is_dying)
 		return
 		
 	current_health -= amount
@@ -523,15 +536,13 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 	
 	print("Player took ", amount, " damage! Health: ", current_health, "/", max_health)
 	
+	# Exit push/pull mode when taking damage
+	if is_push_pull_mode:
+		stop_push_pull_mode()
+	
 	health_changed.emit(current_health)
 	update_health_ui()
-	
-	# Apply knockback to prevent collision glitches
 	apply_knockback(attacker_position)
-	
-	# UI shake effect
-	ui_shake_effect()
-	
 	hurt_effect()
 	
 	if current_health <= 0:
@@ -540,100 +551,68 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 		become_invincible()
 
 func apply_knockback(attacker_position: Vector2):
+	var knockback_direction: Vector2
 	if attacker_position != Vector2.ZERO:
-		# Calculate knockback direction (away from attacker)
-		var knockback_direction = (global_position - attacker_position).normalized()
-		
-		# If no valid direction, use a random direction
-		if knockback_direction.length() < 0.1:
-			knockback_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
-		
-		knockback_velocity = knockback_direction * knockback_force
-		is_knocked_back = true
-		
-		print("Knockback applied! Direction: ", knockback_direction)
-		
-		# Stop knockback after duration
-		get_tree().create_timer(knockback_duration).timeout.connect(stop_knockback)
+		knockback_direction = (global_position - attacker_position).normalized()
 	else:
-		# No attacker position provided, use random knockback
-		var random_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
-		knockback_velocity = random_direction * knockback_force
-		is_knocked_back = true
-		
-		print("Random knockback applied!")
-		get_tree().create_timer(knockback_duration).timeout.connect(stop_knockback)
+		knockback_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
+	
+	knockback_velocity = knockback_direction * knockback_force
+	is_knocked_back = true
+	get_tree().create_timer(knockback_duration).timeout.connect(stop_knockback)
 
 func stop_knockback():
 	is_knocked_back = false
 	knockback_velocity = Vector2.ZERO
-	print("Knockback ended")
 
 func become_invincible():
 	is_invincible = true
-	print("Player is now invincible for ", invincible_time, " seconds")
 	
-	# Blinking effect during invincibility
 	if animated_sprite:
 		var blink_duration = 0.1
 		var total_blinks = int(invincible_time / blink_duration)
 		
 		for i in range(total_blinks):
 			if not is_dead and not is_dying:
-				# Fade out
 				animated_sprite.modulate.a = 0.3
 				await get_tree().create_timer(blink_duration / 2).timeout
 				
 				if not is_dead and not is_dying:
-					# Fade in
 					animated_sprite.modulate.a = 1.0
 					await get_tree().create_timer(blink_duration / 2).timeout
 	
-	# Ensure sprite is fully visible when invincibility ends
 	if animated_sprite and not is_dead and not is_dying:
 		animated_sprite.modulate.a = 1.0
 	
 	is_invincible = false
-	print("Player is no longer invincible")
 
 func hurt_effect():
-	# Play hurt animation if available
-	if animated_sprite and animated_sprite.sprite_frames.has_animation("hurt"):
-		animated_sprite.play("hurt")
-		get_tree().create_timer(0.5).timeout.connect(handle_animation)
-	
-	# Initial damage flash (red)
 	if animated_sprite:
 		animated_sprite.modulate = Color.RED
 		var flash_tween = create_tween()
 		flash_tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.2)
-		flash_tween.tween_callback(extra_damage_blink)
 
-func extra_damage_blink():
-	# Additional quick blink when first taking damage
-	if animated_sprite and not is_invincible:
-		animated_sprite.modulate.a = 0.5
-		var blink_tween = create_tween()
-		blink_tween.tween_property(animated_sprite, "modulate:a", 1.0, 0.15)
+func update_health_ui():
+	if health_ui:
+		var health_percentage = float(current_health) / float(max_health)
+		health_ui.size.x = health_bar_max_width * health_percentage
+		health_ui.color = Color(1, 0, 0, 1.0)
+	
+	if health_label:
+		health_label.text = str(current_health) + "/" + str(max_health)
 
-func ui_shake_effect():
-	# Shake the entire UI background for impact
-	if ui_background:
-		var original_pos = ui_background.position
-		var shake_duration = 0.3
-		var shake_intensity = 3.0
-		
-		for i in range(6):
-			var shake_offset = Vector2(
-				randf_range(-shake_intensity, shake_intensity),
-				randf_range(-shake_intensity, shake_intensity)
-			)
-			ui_background.position = original_pos + shake_offset
-			await get_tree().create_timer(shake_duration / 12.0).timeout
-			ui_background.position = original_pos
-			await get_tree().create_timer(shake_duration / 12.0).timeout
-		
-		ui_background.position = original_pos
+func update_character_portrait():
+	if not character_portrait or not character_portrait.sprite_frames:
+		return
+	
+	if is_invincible:
+		if character_portrait.sprite_frames.has_animation("crying"):
+			if character_portrait.animation != "crying":
+				character_portrait.play("crying")
+	else:
+		if character_portrait.sprite_frames.has_animation("normal"):
+			if character_portrait.animation != "normal":
+				character_portrait.play("normal")
 
 func heal(amount: int):
 	if is_dead or is_dying:
@@ -641,85 +620,45 @@ func heal(amount: int):
 		
 	current_health += amount
 	current_health = min(current_health, max_health)
-	
-	print("Player healed ", amount, "! Health: ", current_health, "/", max_health)
-	
 	health_changed.emit(current_health)
 	update_health_ui()
-	
-	# Healing effect - portrait glows green briefly
-	if character_portrait:
-		character_portrait.modulate = Color.GREEN
-		var tween = create_tween()
-		tween.tween_property(character_portrait, "modulate", Color.WHITE, 0.5)
 
 func die():
 	if is_dead or is_dying:
 		return
 		
 	is_dying = true
-	print("Player is dying! Playing death animation...")
-	
-	# Stop movement and knockback
 	velocity = Vector2.ZERO
-	is_knocked_back = false
-	knockback_velocity = Vector2.ZERO
-	
-	# Turn off flashlight
 	set_flashlight(false)
+	stop_push_pull_mode()
 	
-	# Force crying animation on portrait
-	if character_portrait and character_portrait.sprite_frames and character_portrait.sprite_frames.has_animation("crying"):
-		character_portrait.play("crying")
-	
-	# Play death animation ONCE
-	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("dead"):
-		print("Playing death animation (no loop)")
-		animated_sprite.play("dead")
-		
-		if not animated_sprite.animation_finished.is_connected(_on_death_animation_finished):
-			animated_sprite.animation_finished.connect(_on_death_animation_finished)
-		
-		get_tree().create_timer(3.0).timeout.connect(_on_death_animation_finished)
-	else:
-		print("No death animation found, waiting 1.5 seconds")
-		get_tree().create_timer(1.5).timeout.connect(_on_death_animation_finished)
+	get_tree().create_timer(1.5).timeout.connect(_on_death_animation_finished)
 
 func _on_death_animation_finished():
 	if not is_dying:
 		return
-		
-	if animated_sprite and animated_sprite.animation_finished.is_connected(_on_death_animation_finished):
-		animated_sprite.animation_finished.disconnect(_on_death_animation_finished)
-	
-	print("Death animation finished!")
 	
 	is_dead = true
 	is_dying = false
-	
 	player_died.emit()
 	
-	print("Restarting game in 1 second...")
 	await get_tree().create_timer(1.0).timeout
 	restart_game()
 
 func restart_game():
-	print("Restarting the game scene...")
 	get_tree().reload_current_scene()
 
-# Enemy interaction
 func get_damaged_by_enemy(damage: int, enemy_position: Vector2 = Vector2.ZERO):
 	take_damage(damage, enemy_position)
 
-# Exit system
 func set_can_exit(value: bool):
 	can_exit = value
 
-# Debug functions (keeping your original debug keys)
+# Debug functions
 func debug_take_damage():
 	var fake_attacker_pos = global_position + Vector2(randf_range(-50, 50), randf_range(-50, 50))
 	take_damage(15, fake_attacker_pos)
-	print("Debug: Took 15 damage with knockback")
+	print("Debug: Took 15 damage")
 
 func debug_heal():
 	heal(20)
