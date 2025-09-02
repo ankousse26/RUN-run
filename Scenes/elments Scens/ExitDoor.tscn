@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cxbq6ve4ybqrm" path="res://assets/env/Layer 20.png" id="2_r7ol1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ahoqh"]
-size = Vector2(61.5, 47)
+size = Vector2(93.5, 63)
 
 [node name="Node2D" type="Node2D"]
 
