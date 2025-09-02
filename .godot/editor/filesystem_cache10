@@ -1,13 +1,6 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1756669476
-Battery Pickup.gd::GDScript/GDScript::4794782825787037613::1756502560::0::1::::<>Area2D<><>0<>0<><>::
-battery_pickup.tscn::PackedScene::3262624810446370724::1756669204::0::1::::<><><>0<>0<><>::uid://bq3sdvd0dv48n::::res://assets/Characters/light and battery.png<>uid://cakvmw0h0alrp::::res://Battery Pickup.gd
-box.gd::GDScript::8628163039718366070::1756669133::0::1::::<>RigidBody2D<><>0<>0<><>::
-box.tscn::PackedScene::8661282823580669370::1756669451::0::1::::<><><>0<>0<><>::uid://du6st45auoh6m::::res://box.gd<>uid://swe5n4883ad6::::res://assets/env/Layer 12.png<>uid://c436w5ypypm2x::::res://assets/Characters/shadow2.png
-enemy.gd::GDScript/GDScript::3769864925193257180::1756589316::0::1::::<>CharacterBody2D<><>0<>0<><>::
-enemy.tscn::PackedScene::167985568555702597::1756669204::0::1::::<><><>0<>0<><>::uid://cor7nwmpsnpsa::::res://assets/Characters/enemy/enemy-idel.png<>uid://btyfeh7w73q1i::::res://enemy.gd<>uid://bisbb01ux44tn::::res://assets/Characters/enemy/enemy-Crazy walk.png<>uid://b0ki81ti5sb7j::::res://assets/Characters/shadow.png
+::res://::1756826893
 icon.svg::CompressedTexture2D/CompressedTexture2D::107998305422597951::1755459511::1755459517::1::::<><><>0<>0<>2824a1a4fd025ed72be6fb51590a2b4f<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
-player.gd::GDScript::3693033135359716806::1756668770::0::1::::<>CharacterBody2D<><>0<>0<><>::
 ::res://assets/::1756589450
 ::res://assets/Characters/::1756667740
 light 1 polish.png::CompressedTexture2D/CompressedTexture2D::150626286565095768::1756503740::1756503758::1::::<><><>0<>0<>55b3b9c2c420bcf969750ff3acd42fbf<>res://.godot/imported/light 1 polish.png-36394e6c549b410553d1983d22ca7624.ctex::
@@ -38,12 +31,25 @@ Layer 21.png::CompressedTexture2D/CompressedTexture2D::7385061986801977384::1756
 Layer 22.png::CompressedTexture2D/CompressedTexture2D::7700986874576496266::1756254671::1756254676::1::::<><><>0<>0<>f5238a237cfe28bb9f79bbc55c68e194<>res://.godot/imported/Layer 22.png-459b0d6314cdb952db35183da6138754.ctex::
 Layer 23 copy 2.png::CompressedTexture2D/CompressedTexture2D::1049376619210100883::1756254518::1756254524::1::::<><><>0<>0<>c6c0fbd4efc350940f4ee95008d520ba<>res://.godot/imported/Layer 23 copy 2.png-8575048ae9ceba5cd44695b4c485ee5e.ctex::
 ui back.png::CompressedTexture2D/CompressedTexture2D::932023234936148046::1755460964::1755460994::1::::<><><>0<>0<>d22f3ec4c3b891365046ef43f5d7c003<>res://.godot/imported/ui back.png-0b5fa7734b24440891c4934d8620bcff.ctex::
-::res://Scenes/::1756669204
-level 1.tscn::PackedScene::8194741087318814921::1756669204::0::1::::<><><>0<>0<><>::uid://cx32oallnwaao::::res://assets/env/tilest.png<>uid://xh6w7jeco6tn::::res://assets/env/back.png<>uid://csts38tpqne8b::::res://Scenes/player.tscn<>uid://cnmxyvgwn2ib::::res://enemy.tscn<>uid://cp5ycbv6cw06f::::res://Scenes/elments Scens/key.tscn<>uid://bbf26dkp3e63v::::res://Scenes/elments Scens/ExitDoor.tscn<>uid://bmqo7o1fg6gem::::res://battery_pickup.tscn<>uid://bq3sdvd0dv48n::::res://assets/Characters/light and battery.png<>uid://dvnucepnaql6q::::res://box.tscn
-player.tscn::PackedScene::6076608401622322299::1756669204::0::1::::<><><>0<>0<><>::uid://bsu6yl5002ro5::::res://player.gd<>uid://b4svysp5yiep1::::res://assets/Characters/The hero/Hero-walk.png<>uid://ch8m6rfgnrmig::::res://assets/Characters/The hero/Hero-Dead.png<>uid://c10v7q5s0xfgo::::res://assets/Characters/The hero/Hero-damaged.png<>uid://5ejgxfheq0c7::::res://assets/Characters/The hero/Hero-walk WITH LIGHT.png<>uid://11s2nsieimr3::::res://assets/Characters/The hero/Hero-idel.png<>uid://b0ki81ti5sb7j::::res://assets/Characters/shadow.png<>uid://ddhm5ldi8yuno::::res://assets/ui/Layer 21.png<>uid://e4ps7fdpw3ri::::res://assets/Characters/light player.png<>uid://o7lcyax0q8ex::::res://assets/ui/Layer 23 copy 2.png<>uid://dhyoem1jd364e::::res://assets/ui/Layer 22.png
-::res://Scenes/elments Scens/::1756669204
-EXIT DOOR.gd::GDScript/GDScript::2581100155704032802::1756332677::0::1::::<>Area2D<><>0<>0<><>::
-ExitDoor.tscn::PackedScene::2468626308254416009::1756669204::0::1::::<><><>0<>0<><>::uid://bc1klv5c7ovty::::res://Scenes/elments Scens/EXIT DOOR.gd<>uid://cxbq6ve4ybqrm::::res://assets/env/Layer 20.png
+::res://Scenes/::1756826888
+::res://Scenes/elments Scens/::1756826893
+battery_pickup.tscn::PackedScene::3262624810446370724::1756826861::0::1::::<><><>0<>0<><>::uid://bq3sdvd0dv48n::::res://assets/Characters/light and battery.png<>uid://cakvmw0h0alrp::::res://Script/Battery Pickup.gd
+box.tscn::PackedScene/PackedScene::8661282823580669370::1756826859::0::1::::<><><>0<>0<><>::uid://du6st45auoh6m::::res://Script/box.gd<>uid://swe5n4883ad6::::res://assets/env/Layer 12.png<>uid://c436w5ypypm2x::::res://assets/Characters/shadow2.png
+enemy.tscn::PackedScene/PackedScene::167985568555702597::1756826859::0::1::::<><><>0<>0<><>::uid://cor7nwmpsnpsa::::res://assets/Characters/enemy/enemy-idel.png<>uid://btyfeh7w73q1i::::res://Script/enemy.gd<>uid://bisbb01ux44tn::::res://assets/Characters/enemy/enemy-Crazy walk.png<>uid://b0ki81ti5sb7j::::res://assets/Characters/shadow.png
+ExitDoor.tscn::PackedScene/PackedScene::2468626308254416009::1756826859::0::1::::<><><>0<>0<><>::uid://bc1klv5c7ovty::::res://Script/EXIT DOOR.gd<>uid://cxbq6ve4ybqrm::::res://assets/env/Layer 20.png
+key.tscn::PackedScene/PackedScene::5889066220368994423::1756826859::0::1::::<><><>0<>0<><>::uid://umskreqwk1c3::::res://Script/key.gd<>uid://cxbq6ve4ybqrm::::res://assets/env/Layer 20.png
+::res://Scenes/Levels/::1756826893
+level 1.tscn::PackedScene::8194741087318814921::1756826900::0::1::::<><><>0<>0<><>::uid://cx32oallnwaao::::res://assets/env/tilest.png<>uid://xh6w7jeco6tn::::res://assets/env/back.png<>uid://csts38tpqne8b::::res://Scenes/player and monsters scenes/player.tscn<>uid://cnmxyvgwn2ib::::res://Scenes/elments Scens/enemy.tscn<>uid://cp5ycbv6cw06f::::res://Scenes/elments Scens/key.tscn<>uid://bbf26dkp3e63v::::res://Scenes/elments Scens/ExitDoor.tscn<>uid://bmqo7o1fg6gem::::res://Scenes/elments Scens/battery_pickup.tscn<>uid://bq3sdvd0dv48n::::res://assets/Characters/light and battery.png<>uid://dvnucepnaql6q::::res://Scenes/elments Scens/box.tscn
+Level 2.tscn::PackedScene/PackedScene::6183700132357472331::1756826804::0::1::::<><><>0<>0<><>::
+Level 3.tscn::PackedScene/PackedScene::6933161528398647155::1756824677::0::1::::<><><>0<>0<><>::
+Level 4.tscn::PackedScene/PackedScene::4712732345014809828::1756824684::0::1::::<><><>0<>0<><>::
+Level 5.tscn::PackedScene/PackedScene::1876410165207979572::1756824706::0::1::::<><><>0<>0<><>::
+::res://Scenes/player and monsters scenes/::1756826888
+player.tscn::PackedScene::6076608401622322299::1756826859::0::1::::<><><>0<>0<><>::uid://bsu6yl5002ro5::::res://Script/player.gd<>uid://b4svysp5yiep1::::res://assets/Characters/The hero/Hero-walk.png<>uid://ch8m6rfgnrmig::::res://assets/Characters/The hero/Hero-Dead.png<>uid://c10v7q5s0xfgo::::res://assets/Characters/The hero/Hero-damaged.png<>uid://5ejgxfheq0c7::::res://assets/Characters/The hero/Hero-walk WITH LIGHT.png<>uid://11s2nsieimr3::::res://assets/Characters/The hero/Hero-idel.png<>uid://b0ki81ti5sb7j::::res://assets/Characters/shadow.png<>uid://ddhm5ldi8yuno::::res://assets/ui/Layer 21.png<>uid://e4ps7fdpw3ri::::res://assets/Characters/light player.png<>uid://o7lcyax0q8ex::::res://assets/ui/Layer 23 copy 2.png<>uid://dhyoem1jd364e::::res://assets/ui/Layer 22.png
+::res://Script/::1756826861
+Battery Pickup.gd::GDScript/GDScript::4794782825787037613::1756502560::0::1::::<>Area2D<><>0<>0<><>::
+box.gd::GDScript/GDScript::8628163039718366070::1756826083::0::1::::<>RigidBody2D<><>0<>0<><>::
+enemy.gd::GDScript/GDScript::3769864925193257180::1756589316::0::1::::<>CharacterBody2D<><>0<>0<><>::
+EXIT DOOR.gd::GDScript/GDScript::2581100155704032802::1756826804::0::1::::<>Area2D<><>0<>0<><>::
 key.gd::GDScript/GDScript::1429661069451169784::1756501369::0::1::::<>Area2D<><>0<>0<><>::
-key.tscn::PackedScene::5889066220368994423::1756669204::0::1::::<><><>0<>0<><>::uid://umskreqwk1c3::::res://Scenes/elments Scens/key.gd<>uid://cxbq6ve4ybqrm::::res://assets/env/Layer 20.png
-::res://Script/::1755460685
+player.gd::GDScript/GDScript::3693033135359716806::1756671761::0::1::::<>CharacterBody2D<><>0<>0<><>::

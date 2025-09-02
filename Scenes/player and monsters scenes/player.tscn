@@ -1,6 +1,6 @@
 [gd_scene load_steps=47 format=3 uid="uid://csts38tpqne8b"]
 
-[ext_resource type="Script" uid="uid://bsu6yl5002ro5" path="res://player.gd" id="1_fkybt"]
+[ext_resource type="Script" uid="uid://bsu6yl5002ro5" path="res://Script/player.gd" id="1_fkybt"]
 [ext_resource type="Texture2D" uid="uid://b4svysp5yiep1" path="res://assets/Characters/The hero/Hero-walk.png" id="2_x3wgy"]
 [ext_resource type="Texture2D" uid="uid://ch8m6rfgnrmig" path="res://assets/Characters/The hero/Hero-Dead.png" id="3_3smsa"]
 [ext_resource type="Texture2D" uid="uid://c10v7q5s0xfgo" path="res://assets/Characters/The hero/Hero-damaged.png" id="4_8erm5"]
@@ -313,8 +313,8 @@ animations = [{
 }]
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
-collision_layer = 255
-collision_mask = 255
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_fkybt")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

@@ -8,7 +8,8 @@ extends CharacterBody2D
 # Push/Pull settings
 @export var push_pull_force: float = 600.0
 @export var push_pull_speed: float = 150.0  # Slower speed when pushing/pulling
-@export var interaction_distance: float = 80.0  # Increased from 40 - How close to be to interact with box
+@export var interaction_distance: float = 80.0  # How close to be to detect and select box
+@export var push_distance: float = 35.0  # How close to be to actually push/pull the box
 
 # Key collection system
 @export var keys_needed_to_escape: int = 1
@@ -209,8 +210,10 @@ func start_push_pull_mode():
 	
 	if target_box:
 		is_push_pull_mode = true
+		var distance = global_position.distance_to(target_box.global_position)
 		print("Push/Pull mode activated - Target: ", target_box.name)
-		print("Use WASD to push/pull the box")
+		print("Distance to box: ", int(distance), " (need to be within ", push_distance, " to actually move it)")
+		print("Use WASD to push/pull the box when close enough")
 		
 		# Visual feedback - make box slightly bright
 		if target_box.has_node("Sprite2D"):
@@ -286,9 +289,9 @@ func handle_push_pull_system():
 	if not is_push_pull_mode or not target_box:
 		return
 	
-	# Check if box is still in range
+	# Check if box is still in selection range
 	var distance_to_box = global_position.distance_to(target_box.global_position)
-	if distance_to_box > interaction_distance * 2.0:  # Increased range tolerance
+	if distance_to_box > interaction_distance * 1.5:  # Exit push/pull mode if too far
 		print("Box too far away - exiting push/pull mode")
 		stop_push_pull_mode()
 		return
@@ -307,20 +310,25 @@ func handle_push_pull_system():
 	if input_direction.length() > 0:
 		input_direction = input_direction.normalized()
 		
-		# Apply force to the box using apply_central_force (continuous force, not impulse)
-		var force_to_apply = input_direction * push_pull_force
-		target_box.apply_central_force(force_to_apply)
-		
-		# Determine if we're conceptually pushing or pulling for animation/feedback
-		var direction_to_box = (target_box.global_position - global_position).normalized()
-		var dot_product = input_direction.dot(direction_to_box)
-		
-		if dot_product > 0.1:  # Moving toward box direction
-			is_pulling = true
-			print("PULLING box ", get_direction_name(input_direction))
-		else:  # Moving in other directions
-			is_pushing = true
-			print("PUSHING box ", get_direction_name(input_direction))
+		# ONLY apply force if player is close enough to actually push/pull
+		if distance_to_box <= push_distance:
+			# Apply force to the box using apply_central_force (continuous force, not impulse)
+			var force_to_apply = input_direction * push_pull_force
+			target_box.apply_central_force(force_to_apply)
+			
+			# Determine if we're conceptually pushing or pulling for animation/feedback
+			var direction_to_box = (target_box.global_position - global_position).normalized()
+			var dot_product = input_direction.dot(direction_to_box)
+			
+			if dot_product > 0.1:  # Moving toward box direction
+				is_pulling = true
+				print("PULLING box ", get_direction_name(input_direction))
+			else:  # Moving in other directions
+				is_pushing = true
+				print("PUSHING box ", get_direction_name(input_direction))
+		else:
+			# Player is in push/pull mode but too far to actually move the box
+			print("Too far from box to push/pull (", int(distance_to_box), "/", push_distance, ") - get closer!")
 
 func get_direction_name(direction: Vector2) -> String:
 	if abs(direction.x) > abs(direction.y):

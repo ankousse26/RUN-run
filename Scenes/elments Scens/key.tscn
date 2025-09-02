@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cp5ycbv6cw06f"]
 
-[ext_resource type="Script" uid="uid://umskreqwk1c3" path="res://Scenes/elments Scens/key.gd" id="1_coxau"]
+[ext_resource type="Script" uid="uid://umskreqwk1c3" path="res://Script/key.gd" id="1_coxau"]
 [ext_resource type="Texture2D" uid="uid://cxbq6ve4ybqrm" path="res://assets/env/Layer 20.png" id="1_xm0ow"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_l4kgf"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dvnucepnaql6q"]
 
-[ext_resource type="Script" uid="uid://du6st45auoh6m" path="res://box.gd" id="1_bqn3j"]
+[ext_resource type="Script" uid="uid://du6st45auoh6m" path="res://Script/box.gd" id="1_bqn3j"]
 [ext_resource type="Texture2D" uid="uid://swe5n4883ad6" path="res://assets/env/Layer 12.png" id="1_g2tbl"]
 [ext_resource type="Texture2D" uid="uid://c436w5ypypm2x" path="res://assets/Characters/shadow2.png" id="2_oq5cr"]
 
@@ -10,9 +10,12 @@
 size = Vector2(27, 18)
 
 [node name="Box" type="RigidBody2D" groups=["pushable"]]
-collision_layer = 129
+collision_layer = 131
+collision_mask = 3
+mass = 0.518
 physics_material_override = SubResource("PhysicsMaterial_bqn3j")
 script = ExtResource("1_bqn3j")
+max_speed = 500.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0.5, -2)

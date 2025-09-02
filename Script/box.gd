@@ -24,6 +24,7 @@ func _ready():
 	
 	print("Box ready for push/pull: ", name)
 
+# FIXED: This was "func *physics*process(delta):" - the asterisks broke it
 func _physics_process(delta):
 	# Apply extra friction when moving slowly
 	if linear_velocity.length() < 40 and linear_velocity.length() > 5:
