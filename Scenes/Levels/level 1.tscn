@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://do0ugn3rey8xx"]
+[gd_scene load_steps=13 format=4 uid="uid://do0ugn3rey8xx"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_fg4ri"]
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="2_hkyfo"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bmqo7o1fg6gem" path="res://Scenes/elments Scens/battery_pickup.tscn" id="7_ytnnu"]
 [ext_resource type="Texture2D" uid="uid://bq3sdvd0dv48n" path="res://assets/Characters/light and battery.png" id="8_47kie"]
 [ext_resource type="PackedScene" uid="uid://dvnucepnaql6q" path="res://Scenes/elments Scens/box.tscn" id="9_qk7kj"]
+[ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="10_hkyfo"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fg4ri"]
 texture = ExtResource("1_fg4ri")
@@ -108,4 +109,33 @@ region_enabled = true
 region_rect = Rect2(25.419, 4.11713, 14.8513, 19.6339)
 
 [node name="Box" parent="." instance=ExtResource("9_qk7kj")]
+z_index = 10
 position = Vector2(1016, 314)
+
+[node name="Portal" type="Sprite2D" parent="."]
+position = Vector2(362, 320)
+scale = Vector2(1.67059, 1.67059)
+texture = ExtResource("10_hkyfo")
+region_enabled = true
+region_rect = Rect2(170.609, 0, 112.391, 85.7022)
+
+[node name="NewEnv2" type="Sprite2D" parent="Portal"]
+position = Vector2(68.838, 40.1056)
+scale = Vector2(0.598591, 0.598591)
+texture = ExtResource("10_hkyfo")
+region_enabled = true
+region_rect = Rect2(118.232, 72.4319, 23.8973, 23.5787)
+
+[node name="NewEnv3" type="Sprite2D" parent="Portal"]
+position = Vector2(-369.331, -120.317)
+scale = Vector2(0.598591, 0.598591)
+texture = ExtResource("10_hkyfo")
+region_enabled = true
+region_rect = Rect2(118.232, 72.4319, 23.8973, 23.5787)
+
+[node name="NewEnv4" type="Sprite2D" parent="Portal"]
+position = Vector2(554.894, 160.422)
+scale = Vector2(0.598591, 0.598591)
+texture = ExtResource("10_hkyfo")
+region_enabled = true
+region_rect = Rect2(118.232, 72.4319, 23.8973, 23.5787)

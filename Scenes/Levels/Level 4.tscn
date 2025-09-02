@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=4 uid="uid://b8e5apifxur4w"]
+[gd_scene load_steps=9 format=4 uid="uid://b8e5apifxur4w"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_0vrho"]
 [ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/elments Scens/ExitDoor.tscn" id="2_a32v6"]
 [ext_resource type="PackedScene" uid="uid://csts38tpqne8b" path="res://Scenes/player and monsters scenes/player.tscn" id="3_u5451"]
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="4_6ot83"]
 [ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/elments Scens/key.tscn" id="5_f6k36"]
+[ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="6_a32v6"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wsih0"]
 texture = ExtResource("1_0vrho")
@@ -89,3 +90,11 @@ texture = ExtResource("4_6ot83")
 
 [node name="Key" parent="." instance=ExtResource("5_f6k36")]
 position = Vector2(344, 193)
+
+[node name="NewEnv" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(7, 521)
+scale = Vector2(1.8022, 1.8022)
+texture = ExtResource("6_a32v6")
+region_enabled = true
+region_rect = Rect2(16.0045, 93.7619, 107.697, 91.1284)
