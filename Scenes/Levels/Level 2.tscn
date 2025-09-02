@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4 uid="uid://cudovxhlum7tf"]
+[gd_scene load_steps=11 format=4 uid="uid://cudovxhlum7tf"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_c1vft"]
 [ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/elments Scens/ExitDoor.tscn" id="2_77md0"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="4_nkg0t"]
 [ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/elments Scens/key.tscn" id="5_kvhc7"]
 [ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="6_77md0"]
+[ext_resource type="Script" uid="uid://l8ogyn4p4nb1" path="res://Script/exit2.gd" id="7_3vaw3"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sgcd8"]
 texture = ExtResource("1_c1vft")
@@ -61,6 +62,9 @@ physics_layer_0/collision_layer = 7
 physics_layer_0/collision_mask = 7
 sources/0 = SubResource("TileSetAtlasSource_sgcd8")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nkg0t"]
+size = Vector2(105, 62.75)
+
 [node name="Level2" type="Node2D"]
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
@@ -102,3 +106,11 @@ scale = Vector2(1.65, 1.65)
 texture = ExtResource("6_77md0")
 region_enabled = true
 region_rect = Rect2(17.5585, 101.625, 110.096, 80.7058)
+
+[node name="EXIT" type="Area2D" parent="."]
+script = ExtResource("7_3vaw3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EXIT"]
+position = Vector2(1155, 93.625)
+shape = SubResource("RectangleShape2D_nkg0t")
+debug_color = Color(0.715285, 0.377397, 0.773763, 0.42)

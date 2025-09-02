@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4 uid="uid://c51qfl8o5n7fb"]
+[gd_scene load_steps=11 format=4 uid="uid://c51qfl8o5n7fb"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_7hkxa"]
 [ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/elments Scens/ExitDoor.tscn" id="2_u3voq"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="4_ygoqn"]
 [ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/elments Scens/key.tscn" id="5_vls3m"]
 [ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="6_u3voq"]
+[ext_resource type="Script" uid="uid://brdnrgpbb20j0" path="res://Script/EXIT3.gd" id="7_ibw8r"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wyy5i"]
 texture = ExtResource("1_7hkxa")
@@ -61,6 +62,9 @@ physics_layer_0/collision_layer = 7
 physics_layer_0/collision_mask = 7
 sources/0 = SubResource("TileSetAtlasSource_wyy5i")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ygoqn"]
+size = Vector2(96, 65)
+
 [node name="Level3" type="Node2D"]
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
@@ -69,7 +73,7 @@ tile_map_data = PackedByteArray("AAD4//r/AAABAAAAAAD5//r/AAACAAAAAAD6//r/AAADAAA
 tile_set = SubResource("TileSet_40yoi")
 
 [node name="Door" parent="." instance=ExtResource("2_u3voq")]
-position = Vector2(-188, 323)
+position = Vector2(-268, 83)
 
 [node name="Player" parent="." instance=ExtResource("3_ibw8r")]
 position = Vector2(10, 514)
@@ -97,3 +101,10 @@ scale = Vector2(1.8022, 1.8022)
 texture = ExtResource("6_u3voq")
 region_enabled = true
 region_rect = Rect2(16.0045, 93.7619, 107.697, 91.1284)
+
+[node name="Area2D" type="Area2D" parent="."]
+script = ExtResource("7_ibw8r")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-264, 83)
+shape = SubResource("RectangleShape2D_ygoqn")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://do0ugn3rey8xx"]
+[gd_scene load_steps=15 format=4 uid="uid://do0ugn3rey8xx"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_fg4ri"]
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="2_hkyfo"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cnmxyvgwn2ib" path="res://Scenes/player and monsters scenes/enemy.tscn" id="4_vtplq"]
 [ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/elments Scens/key.tscn" id="5_jshm2"]
 [ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/elments Scens/ExitDoor.tscn" id="6_4smpp"]
+[ext_resource type="Script" uid="uid://cb4wy0fnvassy" path="res://Script/exitDOOR.gd" id="6_nle31"]
 [ext_resource type="PackedScene" uid="uid://bmqo7o1fg6gem" path="res://Scenes/elments Scens/battery_pickup.tscn" id="7_ytnnu"]
 [ext_resource type="Texture2D" uid="uid://bq3sdvd0dv48n" path="res://assets/Characters/light and battery.png" id="8_47kie"]
 [ext_resource type="PackedScene" uid="uid://dvnucepnaql6q" path="res://Scenes/elments Scens/box.tscn" id="9_qk7kj"]
@@ -65,6 +66,9 @@ physics_layer_0/collision_layer = 7
 physics_layer_0/collision_mask = 7
 sources/0 = SubResource("TileSetAtlasSource_fg4ri")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vtplq"]
+size = Vector2(84.644, 52.0161)
+
 [node name="Level1" type="Node2D"]
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
@@ -94,6 +98,16 @@ attack_cooldown = 0.5
 
 [node name="Key" parent="." instance=ExtResource("5_jshm2")]
 position = Vector2(788, 381)
+
+[node name="EXIT" type="Area2D" parent="."]
+position = Vector2(488, 85)
+scale = Vector2(1.39998, 1.24)
+script = ExtResource("6_nle31")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EXIT"]
+position = Vector2(1.60715, -1.41129)
+shape = SubResource("RectangleShape2D_vtplq")
+debug_color = Color(0.878425, 0.000383121, 0.827434, 0.42)
 
 [node name="Door" parent="." instance=ExtResource("6_4smpp")]
 position = Vector2(488, 85)

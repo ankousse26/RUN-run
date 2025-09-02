@@ -1,8 +1,8 @@
+CollisionShape2D
+Area2D
 Label
 RigidBody2D
-CollisionShape2D
 Node2D
-Area2D
 ColorRect
 PointLight2D
 AnimatedSprite2D

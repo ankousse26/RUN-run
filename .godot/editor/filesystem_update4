@@ -1,22 +1,16 @@
+res://Scenes/player and monsters scenes/player.tscn
 res://Scenes/Levels/level 1.tscn
-res://Scenes/player.tscn
-res://Scenes/elments Scens/EXIT DOOR.gd
-res://enemy.tscn
+res://Scenes/player and monsters scenes/enemy.tscn
 res://Scenes/elments Scens/key.tscn
 res://Scenes/elments Scens/ExitDoor.tscn
-res://battery_pickup.tscn
-res://box.tscn
-res://box.gd
-res://Scenes/Levels/Level 2.tscn
-res://Scenes/player and monsters scenes/player.tscn
-res://Scenes/player and monsters scenes/enemy.tscn
 res://Scenes/elments Scens/battery_pickup.tscn
 res://Scenes/elments Scens/box.tscn
-res://Scenes/Levels/Level 3.tscn
-res://Scenes/Levels/Level 4.tscn
-res://Scenes/Levels/Level 5.tscn
-res://Script/EXIT DOOR.gd
 res://Scenes/Levels/level 2.tscn
 res://Scenes/Levels/level 3.tscn
 res://Scenes/Levels/level 4.tscn
 res://Scenes/Levels/level 5.tscn
+res://Script/EXIT DOOR.gd
+res://Scenes/Levels/exitDOOR.gd
+res://Scenes/Levels/exit2.gd
+res://Scenes/Levels/EXIT4.gd
+res://Scenes/Levels/EXIT3.gd
