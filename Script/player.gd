@@ -613,10 +613,11 @@ func update_character_portrait():
 	if not character_portrait or not character_portrait.sprite_frames:
 		return
 	
-	if is_invincible:
+	if is_invincible or is_dying:  # Show crying during dying state too
 		if character_portrait.sprite_frames.has_animation("crying"):
 			if character_portrait.animation != "crying":
 				character_portrait.play("crying")
+				print("Playing crying animation on UI portrait")
 	else:
 		if character_portrait.sprite_frames.has_animation("normal"):
 			if character_portrait.animation != "normal":
@@ -635,25 +636,47 @@ func die():
 	if is_dead or is_dying:
 		return
 		
+	print("Player dying - starting death sequence")
 	is_dying = true
 	velocity = Vector2.ZERO
 	set_flashlight(false)
 	stop_push_pull_mode()
 	
-	get_tree().create_timer(1.5).timeout.connect(_on_death_animation_finished)
+	# Play death animation on player sprite
+	if animated_sprite and animated_sprite.sprite_frames:
+		if animated_sprite.sprite_frames.has_animation("death"):
+			animated_sprite.play("death")
+			print("Playing death animation on player sprite")
+		elif animated_sprite.sprite_frames.has_animation("Death"):
+			animated_sprite.play("Death")
+			print("Playing Death animation on player sprite")
+		elif animated_sprite.sprite_frames.has_animation("dead"):
+			animated_sprite.play("dead")
+			print("Playing dead animation on player sprite")
+		else:
+			print("No death animation found in player sprite")
+	
+	# Update character portrait to crying animation
+	update_character_portrait()
+	
+	# Wait longer to ensure animations have time to play
+	get_tree().create_timer(3.0).timeout.connect(_on_death_animation_finished)
 
 func _on_death_animation_finished():
 	if not is_dying:
 		return
 	
+	print("Death animation finished - transitioning to game over")
 	is_dead = true
 	is_dying = false
 	player_died.emit()
 	
-	await get_tree().create_timer(1.0).timeout
+	# Wait a bit more to show the final state
+	await get_tree().create_timer(2.0).timeout
 	restart_game()
 
 func restart_game():
+	print("Restarting game...")
 	get_tree().reload_current_scene()
 
 func get_damaged_by_enemy(damage: int, enemy_position: Vector2 = Vector2.ZERO):

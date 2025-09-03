@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://do0ugn3rey8xx"]
+[gd_scene load_steps=16 format=4 uid="uid://do0ugn3rey8xx"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_fg4ri"]
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="2_hkyfo"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://bq3sdvd0dv48n" path="res://assets/Characters/light and battery.png" id="8_47kie"]
 [ext_resource type="PackedScene" uid="uid://dvnucepnaql6q" path="res://Scenes/elments Scens/box.tscn" id="9_qk7kj"]
 [ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="10_hkyfo"]
+[ext_resource type="PackedScene" uid="uid://crwtwcpeusnn2" path="res://Scenes/BOSSES/BOSS1.tscn" id="12_vtplq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fg4ri"]
 texture = ExtResource("1_fg4ri")
@@ -140,8 +141,22 @@ texture = ExtResource("10_hkyfo")
 region_enabled = true
 region_rect = Rect2(118.232, 72.4319, 23.8973, 23.5787)
 
+[node name="NewEnv5" type="Sprite2D" parent="Portal"]
+position = Vector2(568.063, -125.105)
+scale = Vector2(0.598591, 0.598591)
+texture = ExtResource("10_hkyfo")
+region_enabled = true
+region_rect = Rect2(118.232, 72.4319, 23.8973, 23.5787)
+
 [node name="NewEnv3" type="Sprite2D" parent="Portal"]
 position = Vector2(-369.331, -120.317)
+scale = Vector2(0.598591, 0.598591)
+texture = ExtResource("10_hkyfo")
+region_enabled = true
+region_rect = Rect2(118.232, 72.4319, 23.8973, 23.5787)
+
+[node name="NewEnv6" type="Sprite2D" parent="Portal"]
+position = Vector2(-387.288, 171.197)
 scale = Vector2(0.598591, 0.598591)
 texture = ExtResource("10_hkyfo")
 region_enabled = true
@@ -153,3 +168,6 @@ scale = Vector2(0.598591, 0.598591)
 texture = ExtResource("10_hkyfo")
 region_enabled = true
 region_rect = Rect2(118.232, 72.4319, 23.8973, 23.5787)
+
+[node name="Node" parent="." instance=ExtResource("12_vtplq")]
+position = Vector2(1057, 422)

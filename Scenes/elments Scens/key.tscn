@@ -1,21 +1,108 @@
-[gd_scene load_steps=4 format=3 uid="uid://cp5ycbv6cw06f"]
+[gd_scene load_steps=9 format=3 uid="uid://cp5ycbv6cw06f"]
 
 [ext_resource type="Script" uid="uid://umskreqwk1c3" path="res://Script/key.gd" id="1_coxau"]
 [ext_resource type="Texture2D" uid="uid://cxbq6ve4ybqrm" path="res://assets/env/Layer 20.png" id="1_xm0ow"]
+[ext_resource type="FontFile" uid="uid://42ajbimrc6s0" path="res://assets/Characters/The hero/Abaddon Bold.ttf" id="3_l4kgf"]
+
+[sub_resource type="Animation" id="Animation_l4kgf"]
+resource_name = "idel"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.466667, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.105, 1.105), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.02, 0.49, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, -1), Vector2(1.055, -0.43), Vector2(1, -1)]
+}
+
+[sub_resource type="Animation" id="Animation_sp3vp"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, -1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_s1ass"]
+_data = {
+&"RESET": SubResource("Animation_sp3vp"),
+&"idel": SubResource("Animation_l4kgf")
+}
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_l4kgf"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sp3vp"]
+radius = 108.005
 
 [node name="Key" type="Node2D"]
 
 [node name="Area2D" type="Area2D" parent="."]
 script = ExtResource("1_coxau")
 
-[node name="pickup area" type="CollisionShape2D" parent="Area2D"]
-scale = Vector2(1.88, 1.36)
-shape = SubResource("CircleShape2D_l4kgf")
-
 [node name="key" type="Sprite2D" parent="Area2D"]
 position = Vector2(1, -1)
 texture = ExtResource("1_xm0ow")
 region_enabled = true
 region_rect = Rect2(38.6159, 49.3026, 33.8314, 18.0039)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Area2D/key"]
+libraries = {
+&"": SubResource("AnimationLibrary_s1ass")
+}
+autoplay = "idel"
+
+[node name="pickup area" type="CollisionShape2D" parent="Area2D"]
+scale = Vector2(1.88, 1.36)
+shape = SubResource("CircleShape2D_l4kgf")
+
+[node name="DetectionArea" type="Area2D" parent="Area2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D/DetectionArea"]
+shape = SubResource("CircleShape2D_sp3vp")
+debug_color = Color(0.673417, 0.373162, 0.873074, 0.42)
+
+[node name="Label" type="Label" parent="Area2D"]
+offset_left = -34.0
+offset_top = -37.0
+offset_right = 7.0
+offset_bottom = -8.0
+theme_override_colors/font_shadow_color = Color(0.611765, 0, 0, 0.333333)
+theme_override_fonts/font = ExtResource("3_l4kgf")
+theme_override_font_sizes/font_size = 25
+text = "KEY"

@@ -320,9 +320,10 @@ script = ExtResource("1_fkybt")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 z_index = 8
 sprite_frames = SubResource("SpriteFrames_2ijsl")
-animation = &"Walk LIGHT"
+animation = &"dead"
 autoplay = "Idel"
-frame_progress = 0.712687
+frame = 16
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 14)
@@ -383,6 +384,7 @@ scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_wohnl")
 animation = &"crying"
 autoplay = "normal"
+frame_progress = 0.348811
 
 [node name="HealthBar" type="ColorRect" parent="UI"]
 custom_minimum_size = Vector2(-0.005, 0)

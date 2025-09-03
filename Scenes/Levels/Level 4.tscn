@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://b8e5apifxur4w"]
+[gd_scene load_steps=12 format=4 uid="uid://b8e5apifxur4w"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_0vrho"]
 [ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/elments Scens/ExitDoor.tscn" id="2_a32v6"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/elments Scens/key.tscn" id="5_f6k36"]
 [ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="6_a32v6"]
 [ext_resource type="Script" uid="uid://dnkbcqcwxyrjv" path="res://Script/EXIT4.gd" id="7_u5451"]
+[ext_resource type="PackedScene" uid="uid://crwtwcpeusnn2" path="res://Scenes/BOSSES/BOSS1.tscn" id="8_6ot83"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wsih0"]
 texture = ExtResource("1_0vrho")
@@ -109,3 +110,6 @@ script = ExtResource("7_u5451")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 position = Vector2(1298, 88.5)
 shape = SubResource("RectangleShape2D_6ot83")
+
+[node name="Node" parent="." instance=ExtResource("8_6ot83")]
+position = Vector2(940, 351)

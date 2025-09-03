@@ -1,0 +1,165 @@
+[gd_scene load_steps=20 format=3 uid="uid://crwtwcpeusnn2"]
+
+[ext_resource type="Texture2D" uid="uid://bwnuadd6fmci6" path="res://assets/Characters/Monster/Monster idel.png" id="1_l1cyx"]
+[ext_resource type="Script" uid="uid://bso67q3pq1vpm" path="res://Scenes/BOSSES/boss1.gd" id="1_t8yym"]
+[ext_resource type="Texture2D" uid="uid://fd6ai2l1tdjn" path="res://assets/Characters/Monster/Monster Run.png" id="2_t8yym"]
+[ext_resource type="Texture2D" uid="uid://b0ki81ti5sb7j" path="res://assets/Characters/shadow.png" id="3_kfwqi"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h1wn4"]
+atlas = ExtResource("1_l1cyx")
+region = Rect2(0, 0, 126, 85)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5lxv4"]
+atlas = ExtResource("1_l1cyx")
+region = Rect2(126, 0, 126, 85)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s6cwi"]
+atlas = ExtResource("1_l1cyx")
+region = Rect2(252, 0, 126, 85)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2xkql"]
+atlas = ExtResource("1_l1cyx")
+region = Rect2(378, 0, 126, 85)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_268ni"]
+atlas = ExtResource("2_t8yym")
+region = Rect2(0, 0, 126, 85)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wlfx6"]
+atlas = ExtResource("2_t8yym")
+region = Rect2(126, 0, 126, 85)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4iyy2"]
+atlas = ExtResource("2_t8yym")
+region = Rect2(252, 0, 126, 85)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5j1mo"]
+atlas = ExtResource("2_t8yym")
+region = Rect2(378, 0, 126, 85)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phrmr"]
+atlas = ExtResource("2_t8yym")
+region = Rect2(504, 0, 126, 85)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_08kcs"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h1wn4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5lxv4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s6cwi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2xkql")
+}],
+"loop": true,
+"name": &"IDEL",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_268ni")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wlfx6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4iyy2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5j1mo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phrmr")
+}],
+"loop": true,
+"name": &"RUN",
+"speed": 12.0
+}]
+
+[sub_resource type="Animation" id="Animation_6bqw6"]
+resource_name = "SHADOW"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.48, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(9.88, 1.71), Vector2(9.64, 1.71), Vector2(9.88, 1.71)]
+}
+
+[sub_resource type="Animation" id="Animation_ehafp"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(9.88, 1.71)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_26ig4"]
+_data = {
+&"RESET": SubResource("Animation_ehafp"),
+&"SHADOW": SubResource("Animation_6bqw6")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f1eet"]
+size = Vector2(97, 66)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_t8yym"]
+radius = 186.097
+
+[node name="Node" type="Node2D"]
+
+[node name="BOSS" type="CharacterBody2D" parent="."]
+script = ExtResource("1_t8yym")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="BOSS"]
+sprite_frames = SubResource("SpriteFrames_08kcs")
+animation = &"IDEL"
+autoplay = "IDEL"
+frame_progress = 0.876616
+
+[node name="Shadow" type="Sprite2D" parent="BOSS/AnimatedSprite2D"]
+modulate = Color(1, 1, 1, 0.380392)
+position = Vector2(-16, 30)
+scale = Vector2(9.88, 1.71)
+texture = ExtResource("3_kfwqi")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="BOSS/AnimatedSprite2D/Shadow"]
+libraries = {
+&"": SubResource("AnimationLibrary_26ig4")
+}
+autoplay = "SHADOW"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BOSS"]
+position = Vector2(-0.5, 3)
+shape = SubResource("RectangleShape2D_f1eet")
+
+[node name="DetectionRange" type="Area2D" parent="BOSS"]
+collision_layer = 15
+collision_mask = 15
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BOSS/DetectionRange"]
+shape = SubResource("CircleShape2D_t8yym")
+debug_color = Color(0.589536, 0.418654, 0.905491, 0.42)
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_top = -58.0
+offset_right = 4.0
+offset_bottom = -31.0
