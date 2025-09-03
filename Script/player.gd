@@ -52,6 +52,9 @@ var enemies_in_light: Array = []
 @onready var character_portrait = $UI/AnimatedSprite2D
 @onready var ui_background = $UI/UIBackground
 
+# Camera reference for shake effects
+@onready var camera_controller = get_viewport().get_camera_2d()
+
 # Variables
 var is_moving: bool = false
 var is_invincible: bool = false
@@ -83,6 +86,13 @@ func _ready():
 	current_battery = max_battery
 	setup_flashlight()
 	update_battery_ui()
+	
+	# Get camera reference for manual shake control (optional)
+	if not camera_controller:
+		camera_controller = get_tree().get_first_node_in_group("camera")
+	
+	if camera_controller:
+		print("Player found camera controller: ", camera_controller.name)
 	
 	check_ui_elements()
 	
@@ -203,6 +213,12 @@ func _input(event):
 	
 	if event is InputEventKey && event.keycode == KEY_2 && event.pressed && !event.echo:
 		debug_heal()
+	
+	# Debug camera shake with key 3
+	if event is InputEventKey && event.keycode == KEY_3 && event.pressed && !event.echo:
+		if camera_controller and camera_controller.has_method("debug_shake"):
+			camera_controller.debug_shake()
+			print("Debug: Camera shake triggered")
 
 func start_push_pull_mode():
 	# Find nearest box
@@ -553,6 +569,15 @@ func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 	apply_knockback(attacker_position)
 	hurt_effect()
 	
+	# Manual camera shake based on damage amount (optional since camera auto-connects to health_changed signal)
+	if camera_controller and camera_controller.has_method("shake_camera"):
+		if amount >= 30:
+			camera_controller.strong_shake()
+		elif amount >= 20:
+			camera_controller.medium_shake()
+		else:
+			camera_controller.light_shake()
+	
 	if current_health <= 0:
 		die()
 	else:
@@ -659,6 +684,10 @@ func die():
 	# Update character portrait to crying animation
 	update_character_portrait()
 	
+	# Trigger death camera shake
+	if camera_controller and camera_controller.has_method("explosion_shake"):
+		camera_controller.explosion_shake()
+	
 	# Wait longer to ensure animations have time to play
 	get_tree().create_timer(3.0).timeout.connect(_on_death_animation_finished)
 
@@ -684,6 +713,11 @@ func get_damaged_by_enemy(damage: int, enemy_position: Vector2 = Vector2.ZERO):
 
 func set_can_exit(value: bool):
 	can_exit = value
+
+# Utility methods for triggering special effects
+func trigger_explosion_shake():
+	if camera_controller and camera_controller.has_method("strong_shake"):
+		camera_controller.strong_shake()  # Uses 2.5 intensity - gentle feedback
 
 # Debug functions
 func debug_take_damage():

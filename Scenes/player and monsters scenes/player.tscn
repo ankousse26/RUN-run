@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://csts38tpqne8b"]
+[gd_scene load_steps=48 format=3 uid="uid://csts38tpqne8b"]
 
 [ext_resource type="Script" uid="uid://bsu6yl5002ro5" path="res://Script/player.gd" id="1_fkybt"]
 [ext_resource type="Texture2D" uid="uid://b4svysp5yiep1" path="res://assets/Characters/The hero/Hero-walk.png" id="2_x3wgy"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://e4ps7fdpw3ri" path="res://assets/Characters/light player.png" id="8_gymyn"]
 [ext_resource type="Texture2D" uid="uid://o7lcyax0q8ex" path="res://assets/ui/Layer 23 copy 2.png" id="8_tx1dd"]
 [ext_resource type="Texture2D" uid="uid://dhyoem1jd364e" path="res://assets/ui/Layer 22.png" id="9_gymyn"]
+[ext_resource type="Script" uid="uid://bos2i8rshcosk" path="res://Scenes/player and monsters scenes/camera_2d.gd" id="9_orx3j"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fkybt"]
 atlas = ExtResource("5_f1ek2")
@@ -367,8 +368,11 @@ position = Vector2(0, 9)
 shape = SubResource("CircleShape2D_gymyn")
 debug_color = Color(0.717831, 0.409687, 0.663588, 0.42)
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("follow_target")]
 zoom = Vector2(2.5, 2.5)
+script = ExtResource("9_orx3j")
+shake_duration = 0.2
+follow_target = NodePath("..")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -384,7 +388,7 @@ scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_wohnl")
 animation = &"crying"
 autoplay = "normal"
-frame_progress = 0.348811
+frame_progress = 0.410176
 
 [node name="HealthBar" type="ColorRect" parent="UI"]
 custom_minimum_size = Vector2(-0.005, 0)

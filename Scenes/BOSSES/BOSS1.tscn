@@ -118,8 +118,8 @@ _data = {
 &"SHADOW": SubResource("Animation_6bqw6")
 }
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_f1eet"]
-size = Vector2(97, 66)
+[sub_resource type="CircleShape2D" id="CircleShape2D_kfwqi"]
+radius = 31.6425
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_t8yym"]
 radius = 186.097
@@ -133,7 +133,7 @@ script = ExtResource("1_t8yym")
 sprite_frames = SubResource("SpriteFrames_08kcs")
 animation = &"IDEL"
 autoplay = "IDEL"
-frame_progress = 0.876616
+frame_progress = 0.148789
 
 [node name="Shadow" type="Sprite2D" parent="BOSS/AnimatedSprite2D"]
 modulate = Color(1, 1, 1, 0.380392)
@@ -148,14 +148,15 @@ libraries = {
 autoplay = "SHADOW"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BOSS"]
-position = Vector2(-0.5, 3)
-shape = SubResource("RectangleShape2D_f1eet")
+position = Vector2(-2, 4)
+shape = SubResource("CircleShape2D_kfwqi")
 
 [node name="DetectionRange" type="Area2D" parent="BOSS"]
 collision_layer = 15
 collision_mask = 15
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BOSS/DetectionRange"]
+position = Vector2(0, 3)
 shape = SubResource("CircleShape2D_t8yym")
 debug_color = Color(0.589536, 0.418654, 0.905491, 0.42)
 

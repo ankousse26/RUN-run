@@ -11,3 +11,4 @@ res://Scenes/Levels/level 5.tscn
 res://Scenes/BOSSES/BOSS1.tscn
 res://Scenes/BOSSES/boss1.gd
 res://Script/player.gd
+res://Scenes/player and monsters scenes/camera_2d.gd
