@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=3 uid="uid://csts38tpqne8b"]
+[gd_scene load_steps=49 format=3 uid="uid://csts38tpqne8b"]
 
 [ext_resource type="Script" uid="uid://bsu6yl5002ro5" path="res://Script/player.gd" id="1_fkybt"]
 [ext_resource type="Texture2D" uid="uid://b4svysp5yiep1" path="res://assets/Characters/The hero/Hero-walk.png" id="2_x3wgy"]
@@ -11,7 +11,8 @@
 [ext_resource type="Texture2D" uid="uid://e4ps7fdpw3ri" path="res://assets/Characters/light player.png" id="8_gymyn"]
 [ext_resource type="Texture2D" uid="uid://o7lcyax0q8ex" path="res://assets/ui/Layer 23 copy 2.png" id="8_tx1dd"]
 [ext_resource type="Texture2D" uid="uid://dhyoem1jd364e" path="res://assets/ui/Layer 22.png" id="9_gymyn"]
-[ext_resource type="Script" uid="uid://bos2i8rshcosk" path="res://Scenes/player and monsters scenes/camera_2d.gd" id="9_orx3j"]
+[ext_resource type="Script" uid="uid://bos2i8rshcosk" path="res://Script/camera_2d.gd" id="9_orx3j"]
+[ext_resource type="Texture2D" uid="uid://bskymb56pttf" path="res://icon.svg" id="13_vxy5f"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fkybt"]
 atlas = ExtResource("5_f1ek2")
@@ -388,7 +389,7 @@ scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_wohnl")
 animation = &"crying"
 autoplay = "normal"
-frame_progress = 0.410176
+frame_progress = 0.243959
 
 [node name="HealthBar" type="ColorRect" parent="UI"]
 custom_minimum_size = Vector2(-0.005, 0)
@@ -426,3 +427,142 @@ offset_top = 96.0
 offset_right = 320.0
 offset_bottom = 113.0
 color = Color(0.85, 0.837817, 0.4845, 1)
+
+[node name="InventoryBar" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 254.0
+offset_top = 519.0
+offset_right = 1005.0
+offset_bottom = 624.0
+
+[node name="InventorySlots" type="BoxContainer" parent="UI/InventoryBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Slot1" type="Panel" parent="UI/InventoryBar/InventorySlots"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="ItemIcon" type="TextureRect" parent="UI/InventoryBar/InventorySlots/Slot1"]
+layout_mode = 0
+offset_left = -451.0
+offset_right = -323.0
+offset_bottom = 128.0
+texture = ExtResource("13_vxy5f")
+
+[node name="CountLabel" type="Label" parent="UI/InventoryBar/InventorySlots/Slot1"]
+layout_mode = 0
+offset_left = -451.0
+offset_right = -411.0
+offset_bottom = 23.0
+
+[node name="Slot2" type="Panel" parent="UI/InventoryBar/InventorySlots"]
+layout_mode = 2
+
+[node name="ItemIcon" type="TextureRect" parent="UI/InventoryBar/InventorySlots/Slot2"]
+layout_mode = 0
+offset_left = -311.0
+offset_right = -183.0
+offset_bottom = 128.0
+texture = ExtResource("13_vxy5f")
+
+[node name="CountLabel" type="Label" parent="UI/InventoryBar/InventorySlots/Slot2"]
+layout_mode = 0
+offset_left = -311.0
+offset_right = -271.0
+offset_bottom = 23.0
+
+[node name="Slot3" type="Panel" parent="UI/InventoryBar/InventorySlots"]
+layout_mode = 2
+
+[node name="ItemIcon" type="TextureRect" parent="UI/InventoryBar/InventorySlots/Slot3"]
+layout_mode = 0
+offset_left = -171.0
+offset_right = -43.0
+offset_bottom = 128.0
+texture = ExtResource("13_vxy5f")
+
+[node name="CountLabel" type="Label" parent="UI/InventoryBar/InventorySlots/Slot3"]
+layout_mode = 0
+offset_left = -171.0
+offset_right = -131.0
+offset_bottom = 23.0
+
+[node name="Slot4" type="Panel" parent="UI/InventoryBar/InventorySlots"]
+layout_mode = 2
+
+[node name="ItemIcon" type="TextureRect" parent="UI/InventoryBar/InventorySlots/Slot4"]
+layout_mode = 0
+offset_left = -28.0
+offset_right = 100.0
+offset_bottom = 128.0
+texture = ExtResource("13_vxy5f")
+
+[node name="CountLabel" type="Label" parent="UI/InventoryBar/InventorySlots/Slot4"]
+layout_mode = 0
+offset_left = -28.0
+offset_right = 12.0
+offset_bottom = 23.0
+
+[node name="Slot5" type="Panel" parent="UI/InventoryBar/InventorySlots"]
+layout_mode = 2
+
+[node name="ItemIcon" type="TextureRect" parent="UI/InventoryBar/InventorySlots/Slot5"]
+layout_mode = 0
+offset_left = 110.0
+offset_right = 238.0
+offset_bottom = 128.0
+texture = ExtResource("13_vxy5f")
+
+[node name="CountLabel" type="Label" parent="UI/InventoryBar/InventorySlots/Slot5"]
+layout_mode = 0
+offset_left = 110.0
+offset_right = 150.0
+offset_bottom = 23.0
+
+[node name="InventoryMenu" type="Control" parent="UI"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorReInventoryBackgroundct" type="ColorRect" parent="UI/InventoryMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -752.0
+offset_bottom = -348.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.187685, 0.0824607, 0.0264612, 0.509804)
+
+[node name="InventoryPanel" type="Panel" parent="UI/InventoryMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InventoryGrid" type="GridContainer" parent="UI/InventoryMenu/InventoryPanel"]
+custom_minimum_size = Vector2(240, 300)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2, 2)
+columns = 5

@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3 uid="uid://duwt0ypbdygpp"]
+
+[ext_resource type="Texture2D" uid="uid://cde0j8xyhr87m" path="res://assets/env/ELMENTS.png" id="1_v7ttx"]
+[ext_resource type="FontFile" uid="uid://42ajbimrc6s0" path="res://assets/Characters/The hero/Abaddon Bold.ttf" id="2_11y8v"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_uo4gd"]
+radius = 15.0333
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gm16f"]
+radius = 102.078
+
+[node name="Stone" type="Area2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2, 0)
+shape = SubResource("CircleShape2D_uo4gd")
+
+[node name="stone" type="Sprite2D" parent="."]
+position = Vector2(0, 2)
+texture = ExtResource("1_v7ttx")
+region_enabled = true
+region_rect = Rect2(39.3259, 27.8834, 19.2232, 17.9065)
+
+[node name="DetectionArea" type="Area2D" parent="."]
+position = Vector2(2, 0)
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+shape = SubResource("CircleShape2D_gm16f")
+debug_color = Color(0.849809, 0.316173, 0.518861, 0.42)
+
+[node name="PickupLabel" type="Label" parent="."]
+offset_left = -23.0
+offset_top = -41.0
+offset_right = 29.0
+offset_bottom = -18.0
+theme_override_fonts/font = ExtResource("2_11y8v")
+text = "Pickup"
