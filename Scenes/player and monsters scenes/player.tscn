@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://csts38tpqne8b"]
+[gd_scene load_steps=50 format=3 uid="uid://csts38tpqne8b"]
 
 [ext_resource type="Script" uid="uid://bsu6yl5002ro5" path="res://Script/player.gd" id="1_fkybt"]
 [ext_resource type="Texture2D" uid="uid://b4svysp5yiep1" path="res://assets/Characters/The hero/Hero-walk.png" id="2_x3wgy"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://dhyoem1jd364e" path="res://assets/ui/Layer 22.png" id="9_gymyn"]
 [ext_resource type="Script" uid="uid://bos2i8rshcosk" path="res://Script/camera_2d.gd" id="9_orx3j"]
 [ext_resource type="Texture2D" uid="uid://bskymb56pttf" path="res://icon.svg" id="13_vxy5f"]
+[ext_resource type="FontFile" uid="uid://42ajbimrc6s0" path="res://assets/Characters/The hero/Abaddon Bold.ttf" id="14_wu14o"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fkybt"]
 atlas = ExtResource("5_f1ek2")
@@ -566,3 +567,41 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(2, 2)
 columns = 5
+
+[node name="DeadScreen" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label2" type="Label" parent="UI/DeadScreen"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 392.0
+offset_top = 297.0
+offset_right = 928.0
+offset_bottom = 393.0
+grow_horizontal = 2
+theme_override_constants/outline_size = 4
+theme_override_constants/shadow_outline_size = 1
+theme_override_fonts/font = ExtResource("14_wu14o")
+theme_override_font_sizes/font_size = 85
+text = "YOU ARE DEAD"
+
+[node name="RestartLabel" type="Label" parent="UI/DeadScreen"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 450.5
+offset_top = 172.0
+offset_right = 869.5
+offset_bottom = 246.0
+grow_horizontal = 2
+theme_override_constants/outline_size = 4
+theme_override_constants/shadow_outline_size = 1
+theme_override_fonts/font = ExtResource("14_wu14o")
+theme_override_font_sizes/font_size = 65
+text = "\"R\" to Restart"

@@ -1,74 +1,65 @@
 extends CharacterBody2D
 
+# --- EXISTING VARIABLES AND EXPORTS (KEEP AS IS) ---
 # Movement settings
 @export var speed: float = 300.0
 @export var acceleration: float = 1500.0
 @export var friction: float = 1200.0
-
 # Push/Pull settings
 @export var push_pull_force: float = 600.0
 @export var push_pull_speed: float = 150.0  # Slower speed when pushing/pulling
 @export var interaction_distance: float = 80.0  # How close to be to detect and select box
 @export var push_distance: float = 35.0  # How close to be to actually push/pull the box
-
 # Key collection system
 @export var keys_needed_to_escape: int = 1
 var collected_keys: Array[String] = []
 @onready var key_ui = $UI/KeyCounter
-
 # Health settings
 @export var max_health: int = 100
 @export var current_health: int = 100
 @export var invincible_time: float = 1.0
-
 # Knockback settings
 @export var knockback_force: float = 300.0
 @export var knockback_duration: float = 0.3
-
 # UI Settings
 @export var health_bar_max_width: float = 100.0
-
 # Flashlight system
 @export var flashlight_enabled: bool = true
 @export var max_battery: float = 100.0
 @export var battery_drain_rate: float = 15.0
 @export var flashlight_detection_range: float = 200.0
-
 # HOTBAR SYSTEM (5 slots for equipped items/tools/traps)
 @export var hotbar_slots: int = 5
 var hotbar: Array = []  # Equipped items: [{item: "spike_trap", count: 3}, null, {item: "flashlight"}, ...]
 var selected_hotbar_slot: int = 0  # Which hotbar slot is selected (0-4)
-
 # INVENTORY SYSTEM (for storing materials)
 var inventory: Dictionary = {}  # Materials storage: {"wood": 10, "metal": 5, "bones": 3}
 var inventory_ui_open: bool = false
-
 # Flashlight references
 @onready var flashlight_light = $PointLight2D
 @onready var flashlight_area = $FlashlightDetectionArea
 @onready var battery_ui = $UI/BatteryBar
 @onready var battery_label = $UI/BatteryLabel
-
 # Hotbar UI references (the bottom bar you see)
 @onready var hotbar_ui = $UI/InventoryBar
 @onready var hotbar_slots_container = $UI/InventoryBar/InventorySlots
-
 # Visual Inventory UI references (separate menu)
 @onready var inventory_menu = $UI/InventoryMenu
 @onready var inventory_grid = $UI/InventoryMenu/InventoryPanel/InventoryGrid
 @onready var inventory_background = $UI/InventoryMenu/InventoryBackground
-
 # Flashlight variables
 var current_battery: float = 100.0
 var flashlight_on: bool = false
 var enemies_in_light: Array = []
-
 # References
 @onready var animated_sprite = $AnimatedSprite2D
 @onready var health_ui = $UI/HealthBar
 @onready var health_label = $UI/HealthLabel
-@onready var character_portrait = $UI/AnimatedSprite2D
+@onready var character_portrait = $UI/AnimatedSprite2D # Assuming this is the portrait node
 @onready var ui_background = $UI/UIBackground
+# --- NEW REFERENCES FOR DEATH SEQUENCE ---
+@onready var dead_screen = $UI/DeadScreen # Reference to the "U DEAD" screen CanvasLayer/Control
+@onready var restart_label = $UI/DeadScreen/RestartLabel # Reference to the blinking "Press R to Restart" label
 
 # Variables
 var is_moving: bool = false
@@ -78,13 +69,11 @@ var is_dying: bool = false
 var is_knocked_back: bool = false
 var knockback_velocity: Vector2 = Vector2.ZERO
 var can_exit: bool = false
-
 # Push/Pull variables
 var is_push_pull_mode: bool = false
 var target_box: RigidBody2D = null
 var is_pushing: bool = false
 var is_pulling: bool = false
-
 # Signals
 signal health_changed(new_health)
 signal player_died
@@ -92,35 +81,35 @@ signal player_died
 func _ready():
 	add_to_group("player")
 	print("Player ready with hotbar and visual inventory system!")
-	
 	# Initialize health
 	current_health = max_health
 	update_health_ui()
-	
 	# Initialize flashlight
 	current_battery = max_battery
 	setup_flashlight()
 	update_battery_ui()
-	
 	# Initialize hotbar and inventory
 	setup_hotbar()
 	setup_inventory()
 	setup_inventory_grid()  # Setup grid layout
-	
 	check_ui_elements()
-	
 	# Debug pushable objects after everything loads
 	call_deferred("debug_pushable_objects")
+	
+	# --- Initialize Death UI ---
+	if dead_screen:
+		dead_screen.hide() # Ensure it's hidden at start
+	if restart_label:
+		restart_label.hide() # Ensure it's hidden at start
 
+# --- EXISTING FUNCTIONS (KEEP AS IS) ---
 # HOTBAR SYSTEM (Quick access tools/traps/weapons)
 func setup_hotbar():
 	print("Setting up hotbar (quick access tools)...")
-	
 	# Initialize empty hotbar slots
 	hotbar.clear()
 	for i in range(hotbar_slots):
 		hotbar.append(null)  # Each slot starts empty
-	
 	# Setup hotbar UI
 	create_hotbar_ui()
 	update_hotbar_ui()
@@ -137,12 +126,9 @@ func use_hotbar_item(slot_index: int):
 	if slot_data == null:
 		print("Hotbar slot ", slot_index + 1, " is empty")
 		return
-	
 	var item_name = slot_data.item
 	var count = slot_data.count
-	
 	print("Using ", item_name, " from hotbar slot ", slot_index + 1)
-	
 	match item_name:
 		"spike_trap":
 			place_trap("spike_trap")
@@ -160,13 +146,11 @@ func use_hotbar_item(slot_index: int):
 			toggle_flashlight()
 		_:
 			print("Don't know how to use: ", item_name)
-	
 	# Reduce count or remove item
 	if count > 1:
 		slot_data.count -= 1
 	else:
 		hotbar[slot_index] = null  # Remove item from hotbar
-	
 	update_hotbar_ui()
 
 func place_trap(trap_type: String):
@@ -185,7 +169,6 @@ func use_super_health_potion():
 # INVENTORY SYSTEM (Materials storage with visual UI)
 func setup_inventory():
 	print("Setting up inventory with visual UI...")
-	
 	# Initialize all material counts
 	inventory.clear()
 	inventory["wood"] = 0
@@ -197,34 +180,27 @@ func setup_inventory():
 	inventory["rope"] = 0
 	inventory["crystal"] = 0   # Very rare material
 	inventory["coal"] = 0      # Fuel material
-	
 	print("Inventory initialized with all 9 material types")
 
 func add_material(material_name: String, amount: int = 1):
 	if not inventory.has(material_name):
 		inventory[material_name] = 0
-	
 	inventory[material_name] += amount
 	print("Added ", amount, " ", material_name, " to inventory. Total: ", inventory[material_name])
-	
 	# Update visual inventory if it's open
 	if inventory_ui_open and inventory_menu and inventory_menu.visible:
 		update_visual_inventory()
-	
 	show_pickup_message(material_name, amount)
 
 func remove_material(material_name: String, amount: int = 1) -> bool:
 	if not inventory.has(material_name) or inventory[material_name] < amount:
 		print("Not enough ", material_name, " in inventory")
 		return false
-	
 	inventory[material_name] -= amount
 	print("Removed ", amount, " ", material_name, " from inventory")
-	
 	# Update visual inventory if it's open
 	if inventory_ui_open and inventory_menu and inventory_menu.visible:
 		update_visual_inventory()
-	
 	return true
 
 func has_material(material_name: String, amount: int = 1) -> bool:
@@ -240,11 +216,9 @@ func update_visual_inventory():
 	if not inventory_grid:
 		print("ERROR: Inventory grid not found!")
 		return
-	
 	# Clear existing inventory display
 	for child in inventory_grid.get_children():
 		child.queue_free()
-	
 	# Define all possible materials with optional rarity for color coding
 	var material_data = {
 		"wood": {"rarity": "common"},
@@ -257,13 +231,11 @@ func update_visual_inventory():
 		"gold": {"rarity": "rare"},
 		"crystal": {"rarity": "legendary"}
 	}
-	
 	# Filter materials the player actually has
 	var materials_to_show = []
 	for material in material_data.keys():
 		if get_material_count(material) > 0:
 			materials_to_show.append(material)
-	
 	# Sort by rarity then alphabetically
 	materials_to_show.sort_custom(func(a, b):
 		var rarity_order = {"common": 0, "uncommon": 1, "rare": 2, "legendary": 3}
@@ -273,7 +245,6 @@ func update_visual_inventory():
 			return a_rarity > b_rarity
 		return a < b
 	)
-	
 	# Create visual slots only for materials with count > 0
 	if materials_to_show.size() > 0:
 		for material in materials_to_show:
@@ -284,21 +255,18 @@ func update_visual_inventory():
 		var empty_container = VBoxContainer.new()
 		empty_container.anchors_preset = Control.PRESET_FULL_RECT
 		empty_container.alignment = BoxContainer.ALIGNMENT_CENTER
-		
 		var empty_icon = TextureRect.new()
 		empty_icon.texture = load("res://icon.png")  # Default Godot icon or custom empty icon
 		empty_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		empty_icon.custom_minimum_size = Vector2(64, 64)
 		empty_icon.modulate = Color(0.5, 0.5, 0.5, 0.5)
 		empty_container.add_child(empty_icon)
-		
 		var empty_label = Label.new()
 		empty_label.text = "Inventory Empty"
 		empty_label.add_theme_font_size_override("font_size", 18)
 		empty_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
 		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		empty_container.add_child(empty_label)
-		
 		inventory_grid.add_child(empty_container)
 
 func create_inventory_slot(material_name: String, count: int, rarity: String = "common"):
@@ -309,44 +277,35 @@ func create_inventory_slot(material_name: String, count: int, rarity: String = "
 	slot_container.set("theme_override_constants/margin_right", 4)
 	slot_container.set("theme_override_constants/margin_top", 4)
 	slot_container.set("theme_override_constants/margin_bottom", 4)
-	
 	# Create the panel for the slot
 	var slot_panel = Panel.new()
-	
 	# Style based on rarity with modern gradient effects
 	var style = create_slot_style(rarity)
 	slot_panel.add_theme_stylebox_override("panel", style)
 	slot_container.add_child(slot_panel)
-	
 	# Create vertical layout for slot contents
 	var content_container = VBoxContainer.new()
 	content_container.anchors_preset = Control.PRESET_FULL_RECT
 	content_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	content_container.set("theme_override_constants/separation", 2)
 	slot_panel.add_child(content_container)
-	
 	# Add top spacer for centering
 	var top_spacer = Control.new()
 	top_spacer.custom_minimum_size = Vector2(0, 8)
 	content_container.add_child(top_spacer)
-	
 	# Create icon container with proper centering
 	var icon_container = CenterContainer.new()
 	icon_container.custom_minimum_size = Vector2(80, 60)
 	content_container.add_child(icon_container)
-	
 	# Create item icon - LARGER AND CENTERED
 	var item_icon = TextureRect.new()
 	item_icon.texture = get_material_icon(material_name)
 	item_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	item_icon.custom_minimum_size = Vector2(48, 48)  # Larger icon size
-	
 	# Add glow effect for rare items
 	if rarity == "rare" or rarity == "legendary":
 		add_glow_effect(item_icon, rarity)
-	
 	icon_container.add_child(item_icon)
-	
 	# Create material name label - modern styling
 	var name_label = Label.new()
 	name_label.text = material_name.capitalize()
@@ -358,15 +317,12 @@ func create_inventory_slot(material_name: String, count: int, rarity: String = "
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	content_container.add_child(name_label)
-	
 	# Create count badge - modern pill-shaped design
 	if count > 1 or rarity == "legendary":
 		var count_container = CenterContainer.new()
 		content_container.add_child(count_container)
-		
 		var count_bg = Panel.new()
 		count_bg.custom_minimum_size = Vector2(32, 20)
-		
 		var count_style = StyleBoxFlat.new()
 		count_style.bg_color = get_count_badge_color(rarity)
 		count_style.corner_radius_top_left = 10
@@ -375,7 +331,6 @@ func create_inventory_slot(material_name: String, count: int, rarity: String = "
 		count_style.corner_radius_bottom_right = 10
 		count_bg.add_theme_stylebox_override("panel", count_style)
 		count_container.add_child(count_bg)
-		
 		var count_label = Label.new()
 		count_label.text = str(count) if count > 999 else str(count)
 		if count > 9999:
@@ -388,35 +343,28 @@ func create_inventory_slot(material_name: String, count: int, rarity: String = "
 		count_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		count_label.anchors_preset = Control.PRESET_FULL_RECT
 		count_bg.add_child(count_label)
-	
 	# Add interactive hover effects
 	slot_panel.mouse_entered.connect(func(): on_slot_hover(slot_panel, material_name, count, rarity))
 	slot_panel.mouse_exited.connect(func(): on_slot_unhover(slot_panel, rarity))
-	
 	# Add click handler for future functionality
 	slot_panel.gui_input.connect(func(event): on_slot_clicked(event, material_name, count))
-	
 	inventory_grid.add_child(slot_container)
 
 func create_slot_style(rarity: String) -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
-	
 	# Base styling
 	style.corner_radius_top_left = 8
 	style.corner_radius_top_right = 8
 	style.corner_radius_bottom_left = 8
 	style.corner_radius_bottom_right = 8
-	
 	style.border_width_left = 2
 	style.border_width_right = 2
 	style.border_width_top = 2
 	style.border_width_bottom = 2
-	
 	# Shadow for depth
 	style.shadow_color = Color(0, 0, 0, 0.3)
 	style.shadow_size = 4
 	style.shadow_offset = Vector2(2, 2)
-	
 	# Rarity-based colors with gradients
 	match rarity:
 		"common":
@@ -437,7 +385,6 @@ func create_slot_style(rarity: String) -> StyleBoxFlat:
 		_:
 			style.bg_color = Color(0.15, 0.15, 0.18, 0.95)
 			style.border_color = Color(0.4, 0.4, 0.45)
-	
 	return style
 
 func get_rarity_text_color(rarity: String) -> Color:
@@ -487,7 +434,6 @@ func on_slot_hover(panel: Panel, material_name: String, count: int, rarity: Stri
 		hover_style.border_width_bottom = 3
 		hover_style.border_color = hover_style.border_color.lightened(0.3)
 		panel.add_theme_stylebox_override("panel", hover_style)
-	
 	# Show tooltip (you can expand this)
 	print("[", rarity.to_upper(), "] ", material_name.capitalize(), " x", count)
 
@@ -539,17 +485,14 @@ func craft_item(item_type: String) -> bool:
 	if recipe.is_empty():
 		print("No recipe found for: ", item_type)
 		return false
-	
 	# Check if we have materials
 	for material in recipe:
 		if not has_material(material, recipe[material]):
 			print("Missing ", recipe[material], " ", material, " to craft ", item_type)
 			return false
-	
 	# Remove materials
 	for material in recipe:
 		remove_material(material, recipe[material])
-	
 	# Add crafted item to first empty hotbar slot
 	add_to_hotbar(item_type, 1)
 	print("Crafted ", item_type, "!")
@@ -584,7 +527,6 @@ func add_to_hotbar(item_name: String, count: int = 1):
 		if hotbar[i] == null:
 			equip_to_hotbar(item_name, i, count)
 			return
-	
 	print("Hotbar full! Cannot add ", item_name)
 
 # INPUT HANDLING
@@ -592,40 +534,37 @@ func _input(event):
 	# Exit with Space key
 	if Input.is_action_just_pressed("EXIT"):
 		attempt_exit()
-	
 	# Collect with E key
 	if Input.is_action_just_pressed("COLLECT"):
 		pass
-	
 	# Toggle flashlight with F key
 	if event is InputEventKey and event.keycode == KEY_F and event.pressed and not event.echo and not is_dead and not is_dying:
 		toggle_flashlight()
-	
 	# Push/Pull mode with B key
 	if event is InputEventKey and event.keycode == KEY_B and not is_dead and not is_dying:
 		if event.pressed and not event.echo:
 			start_push_pull_mode()
 		elif not event.pressed:
 			stop_push_pull_mode()
-	
 	# Handle hotbar and inventory input
 	handle_hotbar_input(event)
 	handle_inventory_input(event)
-	
 	# Debug keys
 	if event is InputEventKey && event.keycode == KEY_1 && event.pressed && !event.echo:
 		debug_take_damage()
-	
 	if event is InputEventKey && event.keycode == KEY_2 && event.pressed && !event.echo:
 		debug_heal()
-	
 	# Debug materials key
 	if event is InputEventKey && event.keycode == KEY_G && event.pressed && !event.echo:
 		debug_give_materials()
-	
 	# Debug visual inventory test
 	if event is InputEventKey && event.keycode == KEY_V && event.pressed && !event.echo:
 		debug_test_visual_inventory()
+		
+	# --- Handle Restart Input during Death Sequence ---
+	if is_dead and dead_screen and dead_screen.visible:
+		if event is InputEventKey and event.keycode == KEY_R and event.pressed and not event.echo:
+			restart_game()
 
 # HOTBAR INPUT
 func handle_hotbar_input(event):
@@ -646,7 +585,6 @@ func handle_hotbar_input(event):
 			KEY_5: 
 				select_hotbar_slot(4)
 				use_hotbar_item(4)
-	
 	# Mouse wheel to select hotbar slots (without using)
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
@@ -659,7 +597,6 @@ func handle_inventory_input(event):
 	# I key to open/close inventory menu
 	if event is InputEventKey and event.keycode == KEY_I and event.pressed and not event.echo:
 		toggle_inventory_menu()
-	
 	# Tab key alternative for inventory
 	if event is InputEventKey and event.keycode == KEY_TAB and event.pressed and not event.echo:
 		toggle_inventory_menu()
@@ -676,10 +613,8 @@ func select_hotbar_slot(slot_index: int):
 
 func toggle_inventory_menu():
 	inventory_ui_open = not inventory_ui_open
-	
 	if inventory_menu:
 		inventory_menu.visible = inventory_ui_open
-		
 		# Set proper z-index to appear on top
 		if inventory_ui_open:
 			inventory_menu.z_index = 100
@@ -709,11 +644,9 @@ func hide_inventory_menu():
 # UI FUNCTIONS
 func create_hotbar_ui():
 	print("Creating hotbar UI...")
-	
 	if not hotbar_slots_container:
 		print("ERROR: Hotbar slots container not found!")
 		return
-	
 	# Style the hotbar slots
 	for i in range(hotbar_slots_container.get_child_count()):
 		var slot = hotbar_slots_container.get_child(i)
@@ -730,21 +663,17 @@ func create_hotbar_ui():
 func update_hotbar_ui():
 	if not hotbar_slots_container:
 		return
-	
 	# Update each hotbar slot's visual
 	for i in range(min(hotbar_slots, hotbar_slots_container.get_child_count())):
 		var slot_panel = hotbar_slots_container.get_child(i)
 		var slot_data = hotbar[i]
-		
 		var item_icon = slot_panel.find_child("ItemIcon")
 		var count_label = slot_panel.find_child("CountLabel")
-		
 		if slot_data != null:
 			# Slot has an equipped item
 			if item_icon:
 				item_icon.texture = get_item_texture(slot_data.item)
 				item_icon.visible = true
-			
 			if count_label:
 				if slot_data.count > 1:
 					count_label.text = str(slot_data.count)
@@ -757,7 +686,6 @@ func update_hotbar_ui():
 				item_icon.visible = false
 			if count_label:
 				count_label.visible = false
-		
 		# Highlight selected slot
 		if slot_panel is Panel:
 			var style = slot_panel.get_theme_stylebox("panel")
@@ -857,7 +785,6 @@ func check_ui_elements():
 	print("Hotbar Slots Container found: ", hotbar_slots_container != null)
 	print("Inventory Menu found: ", inventory_menu != null)
 	print("Inventory Grid found: ", inventory_grid != null)
-	
 	# FORCE INVENTORY TO BE HIDDEN AT START
 	if inventory_menu:
 		inventory_menu.visible = false
@@ -873,42 +800,35 @@ func setup_flashlight():
 		flashlight_area.body_exited.connect(_on_flashlight_area_exited)
 		flashlight_area.monitoring = true
 		flashlight_area.monitorable = true
-	
 	# Configure PointLight2D for Godot 4
 	if flashlight_light:
 		flashlight_light.enabled = false
 		flashlight_light.energy = 3.0
 		flashlight_light.texture_scale = 2.0
 		flashlight_light.color = Color.WHITE
-		
 		# Create light texture if missing
 		if not flashlight_light.texture:
 			var gradient = Gradient.new()
 			gradient.add_point(0.0, Color.WHITE)
 			gradient.add_point(1.0, Color.TRANSPARENT)
-			
 			var gradient_texture = GradientTexture2D.new()
 			gradient_texture.gradient = gradient
 			gradient_texture.fill = GradientTexture2D.FILL_RADIAL
 			gradient_texture.width = 256
 			gradient_texture.height = 256
 			flashlight_light.texture = gradient_texture
-	
 	# Setup detection area shape
 	setup_flashlight_detection_shape()
-	
 	# Initialize flashlight state
 	set_flashlight(false)
 
 func setup_flashlight_detection_shape():
 	if not flashlight_area:
 		return
-	
 	# Clear existing shapes
 	for child in flashlight_area.get_children():
 		if child is CollisionShape2D:
 			child.queue_free()
-	
 	# Create new collision shape
 	var collision_shape = CollisionShape2D.new()
 	var shape = CircleShape2D.new()
@@ -919,28 +839,23 @@ func setup_flashlight_detection_shape():
 func _physics_process(delta):
 	if is_dead or is_dying:
 		return
-		
 	handle_input(delta)
 	handle_push_pull_system()
 	handle_animation()
 	move_and_slide()
-	
 	# Handle flashlight battery
 	handle_flashlight(delta)
-	
 	# Update flashlight direction to face mouse
 	if flashlight_on and flashlight_light:
 		update_flashlight_direction()
 
 func start_push_pull_mode():
 	target_box = find_nearest_box()
-	
 	if target_box:
 		is_push_pull_mode = true
 		var distance = global_position.distance_to(target_box.global_position)
 		print("Push/Pull mode activated - Target: ", target_box.name)
 		print("Distance to box: ", int(distance), " (need to be within ", push_distance, " to actually move it)")
-		
 		if target_box.has_node("Sprite2D"):
 			var sprite = target_box.get_node("Sprite2D")
 			sprite.modulate = Color(1.2, 1.2, 1.0)
@@ -957,7 +872,6 @@ func stop_push_pull_mode():
 		is_push_pull_mode = false
 		is_pushing = false
 		is_pulling = false
-		
 		if target_box:
 			if target_box.has_node("Sprite2D"):
 				var sprite = target_box.get_node("Sprite2D")
@@ -967,38 +881,30 @@ func stop_push_pull_mode():
 				sprite.modulate = Color.WHITE
 			elif target_box.has_method("set_modulate"):
 				target_box.modulate = Color.WHITE
-		
 		target_box = null
 
 func find_nearest_box() -> RigidBody2D:
 	var nearest_box: RigidBody2D = null
 	var nearest_distance: float = interaction_distance
-	
 	var boxes = get_tree().get_nodes_in_group("pushable")
-	
 	for box in boxes:
 		if box is RigidBody2D:
 			var distance = global_position.distance_to(box.global_position)
-			
 			if distance <= interaction_distance:
 				if nearest_box == null or distance < nearest_distance:
 					nearest_distance = distance
 					nearest_box = box
-	
 	return nearest_box
 
 func handle_push_pull_system():
 	is_pushing = false
 	is_pulling = false
-	
 	if not is_push_pull_mode or not target_box:
 		return
-	
 	var distance_to_box = global_position.distance_to(target_box.global_position)
 	if distance_to_box > interaction_distance * 1.5:
 		stop_push_pull_mode()
 		return
-	
 	var input_direction = Vector2.ZERO
 	if Input.is_action_pressed("move_left") or Input.is_action_pressed("ui_left"):
 		input_direction.x -= 1
@@ -1008,17 +914,13 @@ func handle_push_pull_system():
 		input_direction.y -= 1
 	if Input.is_action_pressed("move_down") or Input.is_action_pressed("ui_down"):
 		input_direction.y += 1
-	
 	if input_direction.length() > 0:
 		input_direction = input_direction.normalized()
-		
 		if distance_to_box <= push_distance:
 			var force_to_apply = input_direction * push_pull_force
 			target_box.apply_central_force(force_to_apply)
-			
 			var direction_to_box = (target_box.global_position - global_position).normalized()
 			var dot_product = input_direction.dot(direction_to_box)
-			
 			if dot_product > 0.1:
 				is_pulling = true
 			else:
@@ -1026,7 +928,6 @@ func handle_push_pull_system():
 
 func handle_input(delta):
 	var input_dir = Vector2.ZERO
-	
 	if not is_knocked_back:
 		if Input.is_action_pressed("move_left") or Input.is_action_pressed("ui_left"):
 			input_dir.x -= 1
@@ -1036,7 +937,6 @@ func handle_input(delta):
 			input_dir.y -= 1
 		if Input.is_action_pressed("move_down") or Input.is_action_pressed("ui_down"):
 			input_dir.y += 1
-	
 	if is_knocked_back:
 		velocity = knockback_velocity
 		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, friction * 2 * delta)
@@ -1044,11 +944,9 @@ func handle_input(delta):
 	else:
 		if input_dir.length() > 0:
 			input_dir = input_dir.normalized()
-			
 			var movement_speed = speed
 			if is_push_pull_mode:
 				movement_speed = push_pull_speed
-			
 			velocity = velocity.move_toward(input_dir * movement_speed, acceleration * delta)
 			is_moving = true
 		else:
@@ -1058,20 +956,16 @@ func handle_input(delta):
 func toggle_flashlight():
 	if not flashlight_enabled:
 		return
-		
 	if current_battery <= 0:
 		print("Battery empty!")
 		return
-	
 	set_flashlight(not flashlight_on)
 	handle_animation()
 
 func set_flashlight(state: bool):
 	flashlight_on = state and current_battery > 0
-	
 	if flashlight_light:
 		flashlight_light.enabled = flashlight_on
-	
 	if flashlight_area:
 		flashlight_area.monitoring = flashlight_on
 
@@ -1079,11 +973,9 @@ func handle_flashlight(delta):
 	if flashlight_on and current_battery > 0:
 		current_battery -= battery_drain_rate * delta
 		current_battery = max(current_battery, 0)
-		
 		if current_battery <= 0:
 			set_flashlight(false)
 			handle_animation()
-	
 	update_battery_ui()
 
 func update_flashlight_direction():
@@ -1091,7 +983,6 @@ func update_flashlight_direction():
 		var mouse_pos = get_global_mouse_position()
 		var direction = (mouse_pos - global_position).normalized()
 		var angle = direction.angle()
-		
 		flashlight_light.rotation = angle
 		if flashlight_area:
 			flashlight_area.rotation = angle
@@ -1100,14 +991,12 @@ func update_battery_ui():
 	if battery_ui:
 		var battery_percentage = current_battery / max_battery
 		battery_ui.size.x = 150 * battery_percentage
-		
 		if battery_percentage > 0.5:
 			battery_ui.color = Color.GREEN
 		elif battery_percentage > 0.2:
 			battery_ui.color = Color.YELLOW
 		else:
 			battery_ui.color = Color.RED
-	
 	if battery_label:
 		var battery_percent = int((current_battery / max_battery) * 100)
 		battery_label.text = "Battery: " + str(battery_percent) + "%"
@@ -1137,18 +1026,14 @@ func get_flashlight_state() -> bool:
 func handle_animation():
 	if not animated_sprite or is_dying:
 		return
-	
 	if not animated_sprite.sprite_frames:
 		return
-		
 	if is_moving:
 		var walk_anim = "Walk"
-		
 		if flashlight_on and animated_sprite.sprite_frames.has_animation("Walk LIGHT"):
 			walk_anim = "Walk LIGHT"
 		elif animated_sprite.sprite_frames.has_animation("Walk"):
 			walk_anim = "Walk"
-		
 		if animated_sprite.sprite_frames.has_animation(walk_anim):
 			if animated_sprite.animation != walk_anim:
 				animated_sprite.play(walk_anim)
@@ -1177,7 +1062,6 @@ func trigger_escape():
 func collect_key(key_id: String):
 	if key_id in collected_keys:
 		return
-		
 	collected_keys.append(key_id)
 	print("Collected key: ", key_id, " (", collected_keys.size(), "/", keys_needed_to_escape, ")")
 	update_key_ui()
@@ -1197,18 +1081,14 @@ func can_escape() -> bool:
 func take_damage(amount: int, attacker_position: Vector2 = Vector2.ZERO):
 	if is_invincible or is_dead or is_dying:
 		return
-		
 	current_health -= amount
 	current_health = max(current_health, 0)
-	
 	if is_push_pull_mode:
 		stop_push_pull_mode()
-	
 	health_changed.emit(current_health)
 	update_health_ui()
 	apply_knockback(attacker_position)
 	hurt_effect()
-	
 	if current_health <= 0:
 		die()
 	else:
@@ -1220,7 +1100,6 @@ func apply_knockback(attacker_position: Vector2):
 		knockback_direction = (global_position - attacker_position).normalized()
 	else:
 		knockback_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
-	
 	knockback_velocity = knockback_direction * knockback_force
 	is_knocked_back = true
 	get_tree().create_timer(knockback_duration).timeout.connect(stop_knockback)
@@ -1231,23 +1110,18 @@ func stop_knockback():
 
 func become_invincible():
 	is_invincible = true
-	
 	if animated_sprite:
 		var blink_duration = 0.1
 		var total_blinks = int(invincible_time / blink_duration)
-		
 		for i in range(total_blinks):
 			if not is_dead and not is_dying:
 				animated_sprite.modulate.a = 0.3
 				await get_tree().create_timer(blink_duration / 2).timeout
-				
 				if not is_dead and not is_dying:
 					animated_sprite.modulate.a = 1.0
 					await get_tree().create_timer(blink_duration / 2).timeout
-	
 	if animated_sprite and not is_dead and not is_dying:
 		animated_sprite.modulate.a = 1.0
-	
 	is_invincible = false
 
 func hurt_effect():
@@ -1261,42 +1135,75 @@ func update_health_ui():
 		var health_percentage = float(current_health) / float(max_health)
 		health_ui.size.x = health_bar_max_width * health_percentage
 		health_ui.color = Color(1, 0, 0, 1.0)
-	
 	if health_label:
 		health_label.text = str(current_health) + "/" + str(max_health)
 
 func heal(amount: int):
 	if is_dead or is_dying:
 		return
-		
 	current_health += amount
 	current_health = min(current_health, max_health)
 	health_changed.emit(current_health)
 	update_health_ui()
 
+# --- MODIFIED DEATH SEQUENCE ---
 func die():
 	if is_dead or is_dying:
 		return
-		
 	is_dying = true
 	velocity = Vector2.ZERO
 	set_flashlight(false)
 	stop_push_pull_mode()
 	
-	get_tree().create_timer(1.5).timeout.connect(_on_death_animation_finished)
-
-func _on_death_animation_finished():
-	if not is_dying:
-		return
+	# --- Play Death Animations ---
+	# 1. Play the "dead" animation on the player sprite
+	if animated_sprite and animated_sprite.sprite_frames.has_animation("dead"):
+		animated_sprite.play("dead")
+		# Wait for the animation to finish (or a portion of it)
+		# Adjust the wait time or use animation_finished signal if needed
+		await get_tree().create_timer(0.5).timeout # Adjust delay as needed or wait for animation end
 	
-	is_dead = true
-	is_dying = false
+	# 2. Play the "crying" animation on the UI portrait
+	if character_portrait and character_portrait.sprite_frames and character_portrait.sprite_frames.has_animation("crying"):
+		character_portrait.play("crying")
+	
+	# 3. Show the "U DEAD" screen
+	if dead_screen:
+		dead_screen.show()
+	
+	# 4. Show and start blinking the restart label after a short delay
+	if restart_label:
+		await get_tree().create_timer(1.0).timeout # Wait a bit before showing the prompt
+		if restart_label: # Check again in case it was freed
+			restart_label.show()
+			# Start blinking animation for the label
+			var blink_tween = create_tween().set_loops()
+			blink_tween.tween_property(restart_label, "modulate:a", 0.0, 0.8) # Fade out
+			blink_tween.tween_property(restart_label, "modulate:a", 1.0, 0.8) # Fade in
+			# Note: The loop will stop when the node is freed or scene changes.
+	
+	# Signal that the player died
 	player_died.emit()
 	
-	await get_tree().create_timer(1.0).timeout
-	restart_game()
+	# Mark as dead after animations start
+	is_dead = true
+	is_dying = false
+	# Do NOT call restart_game here. It's handled by _input.
 
+# --- MODIFIED RESTART GAME ---
 func restart_game():
+	# Stop any ongoing tweens related to the restart label to prevent errors
+	# This is a simple way, you might need to manage tweens more carefully
+	# if you have many of them.
+	# For the blinking tween, it's usually fine as it loops on a node that will be freed.
+	
+	# Hide the death screen elements if they exist
+	if dead_screen:
+		dead_screen.hide()
+	if restart_label:
+		restart_label.hide()
+		
+	# Reload the scene
 	get_tree().reload_current_scene()
 
 func get_damaged_by_enemy(damage: int, enemy_position: Vector2 = Vector2.ZERO):

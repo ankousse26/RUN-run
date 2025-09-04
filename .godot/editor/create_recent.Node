@@ -1,10 +1,10 @@
+Label
+Control
 GridContainer
 Panel
 ColorRect
-Control
 Area2D
 CollisionShape2D
-Label
 BoxContainer
 TextureRect
 ProgressBar
@@ -12,4 +12,3 @@ AnimationPlayer
 CharacterBody2D
 AnimatedSprite2D
 Sprite2D
-Node2D
