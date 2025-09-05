@@ -1,3 +1,4 @@
+AnimationPlayer
 Label
 Control
 GridContainer
@@ -8,7 +9,6 @@ CollisionShape2D
 BoxContainer
 TextureRect
 ProgressBar
-AnimationPlayer
 CharacterBody2D
 AnimatedSprite2D
 Sprite2D

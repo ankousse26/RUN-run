@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://cfv4vhxy5vvus"]
+[gd_scene load_steps=6 format=3 uid="uid://cfv4vhxy5vvus"]
 
 [ext_resource type="Texture2D" uid="uid://cde0j8xyhr87m" path="res://assets/env/ELMENTS.png" id="1_3d20d"]
+[ext_resource type="Script" uid="uid://dpvofs41g3jn3" path="res://Script/item scripts/bones.gd" id="1_lscnh"]
 [ext_resource type="FontFile" uid="uid://42ajbimrc6s0" path="res://assets/Characters/The hero/Abaddon Bold.ttf" id="2_lscnh"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_d38i7"]
@@ -10,6 +11,7 @@ radius = 15.0333
 radius = 102.078
 
 [node name="Bones" type="Area2D"]
+script = ExtResource("1_lscnh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(2, 0)

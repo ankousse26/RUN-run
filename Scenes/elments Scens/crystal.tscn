@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://8so82q1g0yu6"]
+[gd_scene load_steps=6 format=3 uid="uid://8so82q1g0yu6"]
 
 [ext_resource type="Texture2D" uid="uid://cde0j8xyhr87m" path="res://assets/env/ELMENTS.png" id="1_25shu"]
+[ext_resource type="Script" uid="uid://bgmffn02pr6p6" path="res://Script/item scripts/crystal.gd" id="1_mh7n2"]
 [ext_resource type="FontFile" uid="uid://42ajbimrc6s0" path="res://assets/Characters/The hero/Abaddon Bold.ttf" id="2_mh7n2"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_51o2m"]
@@ -10,6 +11,7 @@ radius = 15.0333
 radius = 102.078
 
 [node name="Crystal" type="Area2D"]
+script = ExtResource("1_mh7n2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(2, 0)

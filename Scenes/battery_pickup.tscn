@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bmqo7o1fg6gem"]
 
 [ext_resource type="Texture2D" uid="uid://bq3sdvd0dv48n" path="res://assets/Characters/light and battery.png" id="1_btwt1"]
-[ext_resource type="Script" uid="uid://cakvmw0h0alrp" path="res://Script/Battery Pickup.gd" id="1_w6ge3"]
+[ext_resource type="Script" uid="uid://cakvmw0h0alrp" path="res://Script/gameplay scripts/Battery Pickup.gd" id="1_w6ge3"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_u2dai"]
 

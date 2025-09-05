@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dvnucepnaql6q"]
 
-[ext_resource type="Script" uid="uid://du6st45auoh6m" path="res://Script/box.gd" id="1_bqn3j"]
+[ext_resource type="Script" uid="uid://du6st45auoh6m" path="res://Script/gameplay scripts/box.gd" id="1_bqn3j"]
 [ext_resource type="Texture2D" uid="uid://swe5n4883ad6" path="res://assets/env/Layer 12.png" id="1_g2tbl"]
 [ext_resource type="Texture2D" uid="uid://c436w5ypypm2x" path="res://assets/Characters/shadow2.png" id="2_oq5cr"]
 

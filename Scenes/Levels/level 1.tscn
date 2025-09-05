@@ -1,18 +1,26 @@
-[gd_scene load_steps=17 format=4 uid="uid://do0ugn3rey8xx"]
+[gd_scene load_steps=25 format=4 uid="uid://do0ugn3rey8xx"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_fg4ri"]
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="2_hkyfo"]
 [ext_resource type="PackedScene" uid="uid://csts38tpqne8b" path="res://Scenes/player and monsters scenes/player.tscn" id="3_nle31"]
 [ext_resource type="PackedScene" uid="uid://cnmxyvgwn2ib" path="res://Scenes/player and monsters scenes/enemy.tscn" id="4_vtplq"]
-[ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/elments Scens/key.tscn" id="5_jshm2"]
-[ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/elments Scens/ExitDoor.tscn" id="6_4smpp"]
-[ext_resource type="Script" uid="uid://cb4wy0fnvassy" path="res://Script/exitDOOR.gd" id="6_nle31"]
-[ext_resource type="PackedScene" uid="uid://bmqo7o1fg6gem" path="res://Scenes/elments Scens/battery_pickup.tscn" id="7_ytnnu"]
+[ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/key.tscn" id="5_jshm2"]
+[ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/ExitDoor.tscn" id="6_4smpp"]
+[ext_resource type="Script" uid="uid://cb4wy0fnvassy" path="res://Script/gameplay scripts/exitDOOR.gd" id="6_nle31"]
+[ext_resource type="PackedScene" uid="uid://bmqo7o1fg6gem" path="res://Scenes/battery_pickup.tscn" id="7_ytnnu"]
 [ext_resource type="Texture2D" uid="uid://bq3sdvd0dv48n" path="res://assets/Characters/light and battery.png" id="8_47kie"]
-[ext_resource type="PackedScene" uid="uid://dvnucepnaql6q" path="res://Scenes/elments Scens/box.tscn" id="9_qk7kj"]
+[ext_resource type="PackedScene" uid="uid://dvnucepnaql6q" path="res://Scenes/box.tscn" id="9_qk7kj"]
 [ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="10_hkyfo"]
 [ext_resource type="PackedScene" uid="uid://crwtwcpeusnn2" path="res://Scenes/BOSSES/BOSS1.tscn" id="12_vtplq"]
 [ext_resource type="PackedScene" uid="uid://k04e3deijog5" path="res://Scenes/elments Scens/wood.tscn" id="13_jshm2"]
+[ext_resource type="PackedScene" uid="uid://d2y5mvlsm835v" path="res://Scenes/elments Scens/metal.tscn" id="14_4smpp"]
+[ext_resource type="PackedScene" uid="uid://d5clc3kt23k3" path="res://Scenes/elments Scens/gold.tscn" id="15_ytnnu"]
+[ext_resource type="PackedScene" uid="uid://bjpy7y8fhkby1" path="res://Scenes/elments Scens/blood.tscn" id="16_47kie"]
+[ext_resource type="PackedScene" uid="uid://cfv4vhxy5vvus" path="res://Scenes/elments Scens/bones.tscn" id="17_k8npu"]
+[ext_resource type="PackedScene" uid="uid://kmotcsv18wy0" path="res://Scenes/elments Scens/coal.tscn" id="18_va5fq"]
+[ext_resource type="PackedScene" uid="uid://8so82q1g0yu6" path="res://Scenes/elments Scens/crystal.tscn" id="19_nnlwv"]
+[ext_resource type="PackedScene" uid="uid://cnfagaoukdgwu" path="res://Scenes/elments Scens/rope.tscn" id="20_iyjjv"]
+[ext_resource type="PackedScene" uid="uid://duwt0ypbdygpp" path="res://Scenes/elments Scens/stone.tscn" id="21_i78oj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fg4ri"]
 texture = ExtResource("1_fg4ri")
@@ -173,5 +181,29 @@ region_rect = Rect2(118.232, 72.4319, 23.8973, 23.5787)
 [node name="Node" parent="." instance=ExtResource("12_vtplq")]
 position = Vector2(1057, 422)
 
-[node name="CollectibleItem" parent="." instance=ExtResource("13_jshm2")]
+[node name="wood" parent="." instance=ExtResource("13_jshm2")]
 position = Vector2(467, 473)
+
+[node name="Metal" parent="." instance=ExtResource("14_4smpp")]
+position = Vector2(740, 566)
+
+[node name="Gold" parent="." instance=ExtResource("15_ytnnu")]
+position = Vector2(-198, 294)
+
+[node name="Blood" parent="." instance=ExtResource("16_47kie")]
+position = Vector2(-235, 476)
+
+[node name="Bones" parent="." instance=ExtResource("17_k8npu")]
+position = Vector2(-80, 560)
+
+[node name="Coal" parent="." instance=ExtResource("18_va5fq")]
+position = Vector2(-237, 609)
+
+[node name="Crystal" parent="." instance=ExtResource("19_nnlwv")]
+position = Vector2(308, 500)
+
+[node name="Rope" parent="." instance=ExtResource("20_iyjjv")]
+position = Vector2(48, 572)
+
+[node name="Stone" parent="." instance=ExtResource("21_i78oj")]
+position = Vector2(-57, 384)

@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://kmotcsv18wy0"]
+[gd_scene load_steps=6 format=3 uid="uid://kmotcsv18wy0"]
 
 [ext_resource type="Texture2D" uid="uid://cde0j8xyhr87m" path="res://assets/env/ELMENTS.png" id="1_d04r0"]
+[ext_resource type="Script" uid="uid://dlcaws2m3e2lr" path="res://Script/item scripts/coal.gd" id="1_t6r3n"]
 [ext_resource type="FontFile" uid="uid://42ajbimrc6s0" path="res://assets/Characters/The hero/Abaddon Bold.ttf" id="2_t6r3n"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1178e"]
@@ -10,6 +11,7 @@ radius = 15.0333
 radius = 102.078
 
 [node name="Coal" type="Area2D"]
+script = ExtResource("1_t6r3n")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(2, 0)

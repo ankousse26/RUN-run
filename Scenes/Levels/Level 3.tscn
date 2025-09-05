@@ -1,12 +1,12 @@
 [gd_scene load_steps=11 format=4 uid="uid://c51qfl8o5n7fb"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_7hkxa"]
-[ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/elments Scens/ExitDoor.tscn" id="2_u3voq"]
+[ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/ExitDoor.tscn" id="2_u3voq"]
 [ext_resource type="PackedScene" uid="uid://csts38tpqne8b" path="res://Scenes/player and monsters scenes/player.tscn" id="3_ibw8r"]
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="4_ygoqn"]
-[ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/elments Scens/key.tscn" id="5_vls3m"]
+[ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/key.tscn" id="5_vls3m"]
 [ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="6_u3voq"]
-[ext_resource type="Script" uid="uid://brdnrgpbb20j0" path="res://Script/EXIT3.gd" id="7_ibw8r"]
+[ext_resource type="Script" uid="uid://brdnrgpbb20j0" path="res://Script/gameplay scripts/EXIT3.gd" id="7_ibw8r"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wyy5i"]
 texture = ExtResource("1_7hkxa")

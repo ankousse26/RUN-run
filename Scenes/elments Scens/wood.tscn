@@ -1,11 +1,48 @@
-[gd_scene load_steps=6 format=3 uid="uid://k04e3deijog5"]
+[gd_scene load_steps=9 format=3 uid="uid://k04e3deijog5"]
 
-[ext_resource type="Script" uid="uid://dk4ifg0e3wv81" path="res://Script/wood.gd" id="1_cseg0"]
+[ext_resource type="Script" uid="uid://dk4ifg0e3wv81" path="res://Script/item scripts/wood.gd" id="1_cseg0"]
 [ext_resource type="Texture2D" uid="uid://cde0j8xyhr87m" path="res://assets/env/ELMENTS.png" id="2_ys183"]
 [ext_resource type="FontFile" uid="uid://42ajbimrc6s0" path="res://assets/Characters/The hero/Abaddon Bold.ttf" id="3_blhmn"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vo004"]
 radius = 15.0333
+
+[sub_resource type="Animation" id="Animation_cseg0"]
+resource_name = "wood"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.46, 1),
+"transitions": PackedFloat32Array(1, 1.36604, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.055, 1.055), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_ys183"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_blhmn"]
+_data = {
+&"RESET": SubResource("Animation_ys183"),
+&"wood": SubResource("Animation_cseg0")
+}
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_85sht"]
 radius = 102.078
@@ -23,6 +60,12 @@ position = Vector2(0, 2)
 texture = ExtResource("2_ys183")
 region_enabled = true
 region_rect = Rect2(99.7169, 26.0053, 30.5885, 21.6669)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="wood"]
+libraries = {
+&"": SubResource("AnimationLibrary_blhmn")
+}
+autoplay = "wood"
 
 [node name="DetectionArea" type="Area2D" parent="."]
 position = Vector2(2, 0)

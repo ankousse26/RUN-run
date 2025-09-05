@@ -1,10 +1,10 @@
 [gd_scene load_steps=9 format=4 uid="uid://1y7g3w4yn5qu"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_0h7h6"]
-[ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/elments Scens/ExitDoor.tscn" id="2_tsvkk"]
+[ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/ExitDoor.tscn" id="2_tsvkk"]
 [ext_resource type="PackedScene" uid="uid://csts38tpqne8b" path="res://Scenes/player and monsters scenes/player.tscn" id="3_n3b7k"]
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="4_5ijw2"]
-[ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/elments Scens/key.tscn" id="5_wt20e"]
+[ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/key.tscn" id="5_wt20e"]
 [ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="6_tsvkk"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_31ua6"]

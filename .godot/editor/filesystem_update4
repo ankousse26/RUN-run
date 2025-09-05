@@ -14,3 +14,12 @@ res://Scenes/elments Scens/stone.tscn
 res://Scenes/elments Scens/crystal.tscn
 res://Scenes/elments Scens/coal.tscn
 res://Scenes/elments Scens/rope.tscn
+res://Script/wood.gd
+res://Script/metal.gd
+res://Scenes/elments Scens/gold.gd
+res://Scenes/elments Scens/bones.gd
+res://Scenes/elments Scens/blood.gd
+res://Scenes/elments Scens/stone.gd
+res://Scenes/elments Scens/crystal.gd
+res://Scenes/elments Scens/coal.gd
+res://Scenes/elments Scens/rope.gd

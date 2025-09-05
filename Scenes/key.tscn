@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://cp5ycbv6cw06f"]
 
-[ext_resource type="Script" uid="uid://umskreqwk1c3" path="res://Script/key.gd" id="1_coxau"]
+[ext_resource type="Script" uid="uid://umskreqwk1c3" path="res://Script/gameplay scripts/key.gd" id="1_coxau"]
 [ext_resource type="Texture2D" uid="uid://cxbq6ve4ybqrm" path="res://assets/env/Layer 20.png" id="1_xm0ow"]
 [ext_resource type="FontFile" uid="uid://42ajbimrc6s0" path="res://assets/Characters/The hero/Abaddon Bold.ttf" id="3_l4kgf"]
 
