@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://cudovxhlum7tf"]
+[gd_scene load_steps=18 format=4 uid="uid://cudovxhlum7tf"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_c1vft"]
 [ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/ExitDoor.tscn" id="2_77md0"]
@@ -7,6 +7,13 @@
 [ext_resource type="PackedScene" uid="uid://cp5ycbv6cw06f" path="res://Scenes/key.tscn" id="5_kvhc7"]
 [ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="6_77md0"]
 [ext_resource type="Script" uid="uid://l8ogyn4p4nb1" path="res://Script/gameplay scripts/exit2.gd" id="7_3vaw3"]
+[ext_resource type="PackedScene" uid="uid://bi8f17rq14na1" path="res://Scenes/Crafting Room.tscn" id="8_nkg0t"]
+[ext_resource type="PackedScene" uid="uid://cfv4vhxy5vvus" path="res://Scenes/elments Scens/bones.tscn" id="9_ovdq2"]
+[ext_resource type="PackedScene" uid="uid://8so82q1g0yu6" path="res://Scenes/elments Scens/crystal.tscn" id="10_qthsg"]
+[ext_resource type="PackedScene" uid="uid://d5clc3kt23k3" path="res://Scenes/elments Scens/gold.tscn" id="11_iqwto"]
+[ext_resource type="PackedScene" uid="uid://d2y5mvlsm835v" path="res://Scenes/elments Scens/metal.tscn" id="12_elx36"]
+[ext_resource type="PackedScene" uid="uid://cnfagaoukdgwu" path="res://Scenes/elments Scens/rope.tscn" id="13_ol2ii"]
+[ext_resource type="PackedScene" uid="uid://k04e3deijog5" path="res://Scenes/elments Scens/wood.tscn" id="14_0jk83"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sgcd8"]
 texture = ExtResource("1_c1vft")
@@ -114,3 +121,24 @@ script = ExtResource("7_3vaw3")
 position = Vector2(1155, 93.625)
 shape = SubResource("RectangleShape2D_nkg0t")
 debug_color = Color(0.715285, 0.377397, 0.773763, 0.42)
+
+[node name="CraftingBenchArea" parent="." instance=ExtResource("8_nkg0t")]
+position = Vector2(-133, 184)
+
+[node name="Bones" parent="." instance=ExtResource("9_ovdq2")]
+position = Vector2(257, 265)
+
+[node name="Crystal" parent="." instance=ExtResource("10_qthsg")]
+position = Vector2(130, 341)
+
+[node name="Gold" parent="." instance=ExtResource("11_iqwto")]
+position = Vector2(-54, 353)
+
+[node name="Metal" parent="." instance=ExtResource("12_elx36")]
+position = Vector2(-231, 383)
+
+[node name="Rope" parent="." instance=ExtResource("13_ol2ii")]
+position = Vector2(-132, 263)
+
+[node name="CollectibleItem" parent="." instance=ExtResource("14_0jk83")]
+position = Vector2(-132, 447)

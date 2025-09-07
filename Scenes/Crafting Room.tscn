@@ -1,6 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://bi8f17rq14na1"]
+[gd_scene load_steps=13 format=3 uid="uid://bi8f17rq14na1"]
 
 [ext_resource type="Texture2D" uid="uid://5fvevoud51c4" path="res://assets/env/craft room.png" id="1_7p0ys"]
+[ext_resource type="Script" uid="uid://bhhe87321xiy1" path="res://Script/crafting_room.gd" id="1_itwk0"]
 [ext_resource type="Texture2D" uid="uid://bc0qb6gxd2f3g" path="res://Scenes/animate blood-Sheet-export.png" id="2_okkbu"]
 [ext_resource type="PackedScene" uid="uid://cr2hdn7kant53" path="res://Scenes/ui crafting/CraftingUI.tscn" id="3_3vunb"]
 [ext_resource type="Texture2D" uid="uid://beqdybpmj8e56" path="res://assets/env/new env.png" id="4_itwk0"]
@@ -9,8 +10,25 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_okkbu"]
 radius = 168.012
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_3vunb"]
-size = Vector2(213, 52)
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_itwk0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_itwk0"]
+size = Vector2(214, 63)
+
+[sub_resource type="Animation" id="Animation_rw3ir"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
 
 [sub_resource type="Animation" id="Animation_uruq6"]
 resource_name = "blooding"
@@ -29,21 +47,6 @@ tracks/0/keys = {
 "values": [0, 1, 2, 3]
 }
 
-[sub_resource type="Animation" id="Animation_rw3ir"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_3vunb"]
 _data = {
 &"RESET": SubResource("Animation_rw3ir"),
@@ -51,27 +54,32 @@ _data = {
 }
 
 [node name="CraftingBenchArea" type="Node2D"]
+script = ExtResource("1_itwk0")
 
 [node name="SafeZone" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SafeZone"]
-visible = false
 shape = SubResource("CircleShape2D_okkbu")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
+physics_material_override = SubResource("PhysicsMaterial_itwk0")
+
+[node name="InteractionArea" type="Area2D" parent="StaticBody2D"]
+position = Vector2(6.5, -43)
+
+[node name="InteractionArea" type="CollisionShape2D" parent="StaticBody2D/InteractionArea"]
+position = Vector2(-0.5, 1.5)
+shape = SubResource("RectangleShape2D_itwk0")
+debug_color = Color(0.679795, 0.421798, 0.721545, 0.42)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
 z_index = -4
-polygon = PackedVector2Array(90, 37, 120, 36, 120, -82, -107, -83, -103, 37, -72, 37, -71, 6, -96, 7, -96, -38, -30, -39, -30, -28, -18, -27, -17, -37, 108, -34, 110, 6, 89, 8)
+polygon = PackedVector2Array(68, 118, 73, 38, 120, 36, 120, -82, -107, -83, -103, 37, -73, 37, -68, 120, -56, 120, -55, 33, -71, 6, -96, 7, -96, -38, -30, -39, -30, -28, -18, -27, -17, -37, 108, -34, 108, 7, 89, 9, 59, 12, 58, 119)
 
 [node name="CraftRoom" type="Sprite2D" parent="StaticBody2D"]
 z_index = -2
 position = Vector2(-1, 3)
 texture = ExtResource("1_7p0ys")
-
-[node name="InteractionArea" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(6.5, -43)
-shape = SubResource("RectangleShape2D_3vunb")
 
 [node name="EnvironmentProps" type="Sprite2D" parent="."]
 position = Vector2(-61, -51)
@@ -85,6 +93,14 @@ libraries = {
 autoplay = "blooding"
 
 [node name="CraftingUI" parent="." instance=ExtResource("3_3vunb")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+grow_horizontal = 1
+grow_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
+metadata/_edit_use_anchors_ = true
 
 [node name="NewEnv" type="Sprite2D" parent="."]
 z_index = -1
@@ -92,6 +108,7 @@ position = Vector2(1, 60)
 texture = ExtResource("4_itwk0")
 region_enabled = true
 region_rect = Rect2(19.0139, 99.0146, 108.592, 87.8921)
+metadata/_edit_lock_ = true
 
 [node name="Layer20" type="Sprite2D" parent="NewEnv"]
 position = Vector2(-60, -23)

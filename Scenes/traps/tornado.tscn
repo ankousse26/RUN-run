@@ -1,0 +1,74 @@
+[gd_scene load_steps=10 format=3 uid="uid://b7wq7gwd751du"]
+
+[ext_resource type="Texture2D" uid="uid://yxdih0400u1l" path="res://assets/traps/tornado trap.png" id="1_cp4mo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_skjg2"]
+atlas = ExtResource("1_cp4mo")
+region = Rect2(123, 0, 41, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bo5xo"]
+atlas = ExtResource("1_cp4mo")
+region = Rect2(164, 0, 41, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jsuq5"]
+atlas = ExtResource("1_cp4mo")
+region = Rect2(205, 0, 41, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jpv5f"]
+atlas = ExtResource("1_cp4mo")
+region = Rect2(246, 0, 41, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4bsg3"]
+atlas = ExtResource("1_cp4mo")
+region = Rect2(0, 0, 41, 38)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_867wx"]
+atlas = ExtResource("1_cp4mo")
+region = Rect2(41, 0, 41, 38)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_025ve"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_skjg2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bo5xo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jsuq5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jpv5f")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 13.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4bsg3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_867wx")
+}],
+"loop": true,
+"name": &"idel",
+"speed": 2.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cp4mo"]
+size = Vector2(25, 23)
+
+[node name="Tornado" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_025ve")
+animation = &"idel"
+frame_progress = 0.0849902
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-0.5, -3.5)
+shape = SubResource("RectangleShape2D_cp4mo")

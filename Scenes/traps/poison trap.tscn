@@ -1,0 +1,48 @@
+[gd_scene load_steps=7 format=3 uid="uid://cgto2ikthcj3v"]
+
+[ext_resource type="Texture2D" uid="uid://c1buh4ey7tgvc" path="res://assets/traps/pois.png" id="1_w37te"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3j5pg"]
+atlas = ExtResource("1_w37te")
+region = Rect2(0, 0, 32, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t70gv"]
+atlas = ExtResource("1_w37te")
+region = Rect2(32, 0, 32, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hdd5x"]
+atlas = ExtResource("1_w37te")
+region = Rect2(64, 0, 32, 27)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xm4in"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3j5pg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t70gv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hdd5x")
+}],
+"loop": true,
+"name": &"trap",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e8rc4"]
+size = Vector2(34, 28.5)
+
+[node name="PoisonTrap" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_xm4in")
+animation = &"trap"
+frame_progress = 0.0870866
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, -1.25)
+shape = SubResource("RectangleShape2D_e8rc4")

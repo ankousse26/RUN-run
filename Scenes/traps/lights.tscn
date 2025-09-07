@@ -1,0 +1,72 @@
+[gd_scene load_steps=10 format=3 uid="uid://bhcshbd3ry6oe"]
+
+[ext_resource type="Texture2D" uid="uid://c0bf0jv5wjygg" path="res://assets/traps/chm3a-Sheet-export.png" id="1_q3r61"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b13hf"]
+atlas = ExtResource("1_q3r61")
+region = Rect2(0, 0, 67, 50)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rt8xn"]
+atlas = ExtResource("1_q3r61")
+region = Rect2(67, 0, 67, 50)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m4wxr"]
+atlas = ExtResource("1_q3r61")
+region = Rect2(134, 0, 67, 50)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5blc5"]
+atlas = ExtResource("1_q3r61")
+region = Rect2(201, 0, 67, 50)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o2xd8"]
+atlas = ExtResource("1_q3r61")
+region = Rect2(268, 0, 67, 50)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h3w7e"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b13hf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rt8xn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m4wxr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5blc5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o2xd8")
+}],
+"loop": true,
+"name": &"light",
+"speed": 9.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xx4fe"]
+radius = 65.9242
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_miput"]
+size = Vector2(18, 27)
+
+[node name="Lights" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_h3w7e")
+animation = &"light"
+frame_progress = 0.829625
+
+[node name="Detect" type="Area2D" parent="."]
+position = Vector2(5, -2)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detect"]
+shape = SubResource("CircleShape2D_xx4fe")
+debug_color = Color(0.620006, 0.445729, 0.772049, 0.42)
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(4, 8.5)
+shape = SubResource("RectangleShape2D_miput")
