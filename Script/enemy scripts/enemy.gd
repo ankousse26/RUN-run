@@ -10,8 +10,12 @@ extends CharacterBody2D
 @export var patrol_speed: float = 80.0
 @export var suspicion_duration: float = 3.0
 
+# Health and damage system
+@export var max_health: int = 100
+@export var current_health: int = 100
+
 # References
-@onready var detection_area = $"DetectionRange"  # Make sure this matches your actual Area2D node name
+@onready var detection_area = $"DetectionRange"
 @onready var animated_sprite = $AnimatedSprite2D
 
 # Variables
@@ -28,9 +32,20 @@ var patrol_direction: Vector2 = Vector2.RIGHT
 var patrol_timer: float = 0.0
 var retreat_cooldown: float = 0.0
 
+# Slow effect variables
+var is_slowed: bool = false
+var original_speed: float
+var original_patrol_speed: float
+var slow_effect_timer: float = 0.0
+
 func _ready():
 	add_to_group("enemy")
 	print("Enemy ready: ", name)
+	
+	# Store original speeds for slow effect
+	original_speed = speed
+	original_patrol_speed = patrol_speed
+	current_health = max_health
 	
 	if detection_area:
 		detection_area.body_entered.connect(_on_detection_area_body_entered)
@@ -55,6 +70,12 @@ func _ready():
 	patrol_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
 
 func _physics_process(delta):
+	# Handle slow effect timer
+	if is_slowed:
+		slow_effect_timer -= delta
+		if slow_effect_timer <= 0:
+			remove_slow_effect()
+	
 	# Update timers
 	if retreat_cooldown > 0:
 		retreat_cooldown -= delta
@@ -109,9 +130,8 @@ func handle_smart_light_retreat(delta):
 	velocity = retreat_direction * speed * retreat_speed_multiplier
 	
 	# Set cooldown to prevent flickering
-	retreat_cooldown = 0.2  # Reduced cooldown for better responsiveness
+	retreat_cooldown = 0.2
 
-# FIXED: Simplified chase behavior
 func handle_chase_behavior_fixed(delta):
 	if not player:
 		print("ERROR: Player reference lost during chase!")
@@ -157,7 +177,6 @@ func handle_patrol_behavior(delta):
 		velocity = Vector2.ZERO
 		patrol_timer = randf_range(0.5, 1.5)
 
-# FIXED: Simplified collision damage check
 func check_collision_with_player_fixed():
 	if not player or not can_attack:
 		return
@@ -184,7 +203,6 @@ func check_collision_with_player_fixed():
 	# Reset collision flag when not touching
 	has_collided_with_player = false
 
-# FIXED: Attack function with pushback to prevent sticking
 func attack_player_simple():
 	if not player or not can_attack or in_player_light:
 		print("Attack blocked - player:", player != null, " can_attack:", can_attack, " in_light:", in_player_light)
@@ -230,20 +248,76 @@ func push_back_from_player():
 		pushback_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
 	
 	# Apply strong pushback force
-	var pushback_force = pushback_direction * 180.0  # Adjust this value for more/less pushback
+	var pushback_force = pushback_direction * 180.0
 	velocity = pushback_force
 	
 	# Temporarily reduce speed to let pushback take effect
-	var original_speed = speed
-	speed = speed * 0.3  # Slow down briefly
+	var current_speed = speed
+	speed = speed * 0.3
 	
 	# Restore normal speed after pushback
 	get_tree().create_timer(0.6).timeout.connect(func():
-		speed = original_speed
+		speed = current_speed
 		print("Enemy pushback complete - normal speed restored")
 	)
 	
 	print("Enemy pushed back from player after attack!")
+
+# DAMAGE AND SLOW SYSTEM
+func take_damage(damage_amount: int):
+	current_health -= damage_amount
+	print("Enemy took ", damage_amount, " damage! Health: ", current_health, "/", max_health)
+	
+	# Visual damage effect
+	if animated_sprite:
+		animated_sprite.modulate = Color.RED
+		var tween = create_tween()
+		tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.3)
+	
+	# Check if dead
+	if current_health <= 0:
+		die()
+
+func apply_slow_effect(slow_percentage: float, duration: float):
+	if is_slowed:
+		# If already slowed, extend the duration
+		slow_effect_timer = max(slow_effect_timer, duration)
+		return
+	
+	print("Enemy slowed by ", slow_percentage * 100, "% for ", duration, " seconds!")
+	
+	is_slowed = true
+	slow_effect_timer = duration
+	
+	# Apply slow to all speed variables
+	speed = original_speed * (1.0 - slow_percentage)
+	patrol_speed = original_patrol_speed * (1.0 - slow_percentage)
+	
+	# Visual slow effect
+	if animated_sprite:
+		animated_sprite.modulate = Color.BLUE * 1.2
+		animated_sprite.speed_scale = 0.5
+
+func remove_slow_effect():
+	if not is_slowed:
+		return
+		
+	print("Slow effect ended - enemy speed restored!")
+	
+	is_slowed = false
+	
+	# Restore original speeds
+	speed = original_speed
+	patrol_speed = original_patrol_speed
+	
+	# Restore visual effects
+	if animated_sprite:
+		animated_sprite.modulate = Color.WHITE
+		animated_sprite.speed_scale = 1.0
+
+func die():
+	print("Enemy died!")
+	queue_free()
 
 func handle_player_push(collision):
 	if not player:
@@ -284,7 +358,6 @@ func push_away_from_player():
 		print("Enemy pushed back very strongly after attack")
 
 func attack_player():
-	# This is your original attack function - keeping for compatibility
 	attack_player_simple()
 
 func attack_effect():
@@ -322,12 +395,12 @@ func update_animation():
 		if animated_sprite.sprite_frames.has_animation("idle"):
 			animated_sprite.play("idle")
 
-# Light detection functions - called by player's flashlight
+# Light detection functions
 func enter_light():
 	print("ENEMY ENTERED LIGHT!")
 	if not in_player_light:
 		in_player_light = true
-		velocity = Vector2.ZERO  # Stop immediately when entering light
+		velocity = Vector2.ZERO
 		print("Enemy entered player's light - RETREATING!")
 
 func exit_light():
@@ -336,7 +409,7 @@ func exit_light():
 	retreat_cooldown = 0.0
 	print("Enemy left player's light")
 
-# FIXED: Detection signals with better debugging
+# Detection signals
 func _on_detection_area_body_entered(body):
 	print("DETECTION AREA ENTERED - Body: ", body.name if body else "NULL")
 	print("Body groups: ", body.get_groups() if body else "NONE")
@@ -364,9 +437,9 @@ func _on_detection_area_body_exited(body):
 			is_suspicious = true
 			suspicion_timer = suspicion_duration
 
-# Debug function with enhanced output
+# Debug function
 func _input(event):
-	if event.is_action_pressed("ui_cancel"):  # ESC key
+	if event.is_action_pressed("ui_cancel"):
 		print("=== ENEMY DEBUG INFO ===")
 		print("Enemy name: ", name)
 		print("Enemy position: ", global_position)
@@ -381,6 +454,8 @@ func _input(event):
 		print("Has collided: ", has_collided_with_player)
 		print("Current velocity: ", velocity)
 		print("Speed setting: ", speed)
+		print("Health: ", current_health, "/", max_health)
+		print("Is slowed: ", is_slowed)
 		print("Groups: ", get_groups())
 		
 		if detection_area:

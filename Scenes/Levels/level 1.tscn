@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=4 uid="uid://do0ugn3rey8xx"]
+[gd_scene load_steps=26 format=4 uid="uid://do0ugn3rey8xx"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_fg4ri"]
 [ext_resource type="Texture2D" uid="uid://xh6w7jeco6tn" path="res://assets/env/back.png" id="2_hkyfo"]
@@ -21,6 +21,7 @@
 [ext_resource type="PackedScene" uid="uid://8so82q1g0yu6" path="res://Scenes/elments Scens/crystal.tscn" id="19_nnlwv"]
 [ext_resource type="PackedScene" uid="uid://cnfagaoukdgwu" path="res://Scenes/elments Scens/rope.tscn" id="20_iyjjv"]
 [ext_resource type="PackedScene" uid="uid://duwt0ypbdygpp" path="res://Scenes/elments Scens/stone.tscn" id="21_i78oj"]
+[ext_resource type="PackedScene" uid="uid://dw68iuf2g07" path="res://Scenes/traps/spike.tscn" id="22_va5fq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fg4ri"]
 texture = ExtResource("1_fg4ri")
@@ -178,7 +179,7 @@ texture = ExtResource("10_hkyfo")
 region_enabled = true
 region_rect = Rect2(118.232, 72.4319, 23.8973, 23.5787)
 
-[node name="Node" parent="." instance=ExtResource("12_vtplq")]
+[node name="Node" parent="." groups=["boss"] instance=ExtResource("12_vtplq")]
 position = Vector2(1057, 422)
 
 [node name="wood" parent="." instance=ExtResource("13_jshm2")]
@@ -207,3 +208,17 @@ position = Vector2(48, 572)
 
 [node name="Stone" parent="." instance=ExtResource("21_i78oj")]
 position = Vector2(-57, 384)
+
+[node name="Spike" parent="." instance=ExtResource("22_va5fq")]
+position = Vector2(962, 384)
+
+[node name="Spike2" parent="." instance=ExtResource("22_va5fq")]
+position = Vector2(926, 385)
+
+[node name="Spike3" parent="." instance=ExtResource("22_va5fq")]
+position = Vector2(926, 419)
+
+[node name="Spike4" parent="." instance=ExtResource("22_va5fq")]
+position = Vector2(965, 418)
+damage_amount = 500
+slow_percentage = 9.01

@@ -119,14 +119,14 @@ _data = {
 }
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kfwqi"]
-radius = 31.6425
+radius = 36.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_t8yym"]
 radius = 186.097
 
-[node name="Node" type="Node2D"]
+[node name="boss" type="Node2D"]
 
-[node name="BOSS" type="CharacterBody2D" parent="."]
+[node name="BOSS" type="CharacterBody2D" parent="." groups=["boss", "enemy"]]
 script = ExtResource("1_t8yym")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="BOSS"]
@@ -148,7 +148,7 @@ libraries = {
 autoplay = "SHADOW"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BOSS"]
-position = Vector2(-2, 4)
+position = Vector2(1, 7)
 shape = SubResource("CircleShape2D_kfwqi")
 
 [node name="DetectionRange" type="Area2D" parent="BOSS"]

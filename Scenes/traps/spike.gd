@@ -1,202 +1,197 @@
 extends Node2D
 
-# Trap settings
-@export var damage: int = 25
-@export var activation_delay: float = 0.2  # Delay before spikes come up
-@export var reset_time: float = 2.0  # Time before trap can trigger again
-@export var uses: int = -1  # -1 for infinite uses, positive number for limited uses
-@export var targets_enemies: bool = true
-@export var targets_player: bool = false
+# Trap settings - adjust these in the inspector
+@export var damage_amount: int = 15
+@export var slow_percentage: float = 0.6  # 60% speed reduction
+@export var slow_duration: float = 4.0    # 4 seconds of slow effect
+@export var damage_cooldown: float = 1.0  # Time between damage ticks while on trap
+@export var trap_activation_delay: float = 0.2  # Small delay before first damage
 
 # References
-@onready var animated_sprite = $AnimatedSprite2D
 @onready var detect_area = $detect_area
+@onready var animated_sprite = $AnimatedSprite2D
 
-# State management
-enum TrapState { IDLE, TRIGGERED, COOLDOWN, DEPLETED }
-var current_state: TrapState = TrapState.IDLE
-var current_uses: int = 0
-var bodies_in_range: Array = []
-
-# Timers
-var activation_timer: Timer
-var cooldown_timer: Timer
+# Variables
+var enemies_in_trap = {}  # Track enemies and their damage timers
+var is_trap_active: bool = false
 
 func _ready():
-	# Set up detection area
+	print("Spike trap initialized: ", name)
+	
+	# Connect signals
 	if detect_area:
 		detect_area.body_entered.connect(_on_body_entered)
 		detect_area.body_exited.connect(_on_body_exited)
 		detect_area.monitoring = true
-	
-	# Create activation delay timer
-	activation_timer = Timer.new()
-	activation_timer.one_shot = true
-	activation_timer.wait_time = activation_delay
-	activation_timer.timeout.connect(_activate_trap)
-	add_child(activation_timer)
-	
-	# Create cooldown timer
-	cooldown_timer = Timer.new()
-	cooldown_timer.one_shot = true
-	cooldown_timer.wait_time = reset_time
-	cooldown_timer.timeout.connect(_reset_trap)
-	add_child(cooldown_timer)
-	
-	# Initialize uses
-	current_uses = uses
+		print("Trap detection area connected successfully")
+		
+		# Debug collision setup
+		print("Trap detection collision mask: ", detect_area.collision_mask)
+		print("Trap detection collision layer: ", detect_area.collision_layer)
+	else:
+		print("ERROR: detect_area not found in spike trap!")
 	
 	# Start with idle animation
 	if animated_sprite:
-		animated_sprite.play("idel")
+		if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("idle"):
+			animated_sprite.play("idle")
+		else:
+			print("Warning: No 'idle' animation found for spike trap")
+	else:
+		print("ERROR: AnimatedSprite2D not found in spike trap!")
+
+func _physics_process(delta):
+	# Handle continuous damage for enemies on the trap
+	for enemy in enemies_in_trap.keys():
+		if is_instance_valid(enemy):
+			enemies_in_trap[enemy] -= delta
+			
+			# Time to damage this enemy again
+			if enemies_in_trap[enemy] <= 0:
+				damage_and_slow_enemy(enemy)
+				enemies_in_trap[enemy] = damage_cooldown
+		else:
+			# Remove invalid enemy references
+			enemies_in_trap.erase(enemy)
+			print("Removed invalid enemy reference from trap")
 	
-	print("Spike trap initialized - Damage: ", damage, " Uses: ", uses)
+	# Check if trap should be active
+	var should_be_active = enemies_in_trap.size() > 0
+	if should_be_active != is_trap_active:
+		is_trap_active = should_be_active
+		update_trap_animation()
 
 func _on_body_entered(body):
-	# Check if we should react to this body
-	if not _should_trigger_for(body):
-		return
+	print("Body entered spike trap: ", body.name if body else "NULL")
+	print("Body groups: ", body.get_groups() if body else "NONE")
 	
-	bodies_in_range.append(body)
-	
-	# Only trigger if trap is idle
-	if current_state == TrapState.IDLE:
-		_trigger_trap()
+	if body and body.is_in_group("enemy"):
+		print("Enemy stepped on spike trap: ", body.name)
+		
+		# Add enemy to tracking with initial delay
+		enemies_in_trap[body] = trap_activation_delay
+		
+		# Update animation immediately
+		update_trap_animation()
+		
+		# Visual activation effect
+		create_activation_effect()
+		
+		print("Enemy added to trap. Total enemies on trap: ", enemies_in_trap.size())
+	else:
+		print("Non-enemy body entered trap (ignored)")
 
 func _on_body_exited(body):
-	bodies_in_range.erase(body)
-
-func _should_trigger_for(body) -> bool:
-	# Check if trap is active
-	if current_state != TrapState.IDLE:
-		return false
+	print("Body exited spike trap: ", body.name if body else "NULL")
 	
-	# Check if trap is depleted
-	if current_uses == 0:
-		return false
-	
-	# Check target type
-	if targets_enemies and body.is_in_group("enemy"):
-		return true
-	
-	if targets_player and body.is_in_group("player"):
-		return true
-	
-	return false
-
-func _trigger_trap():
-	if current_state != TrapState.IDLE:
-		return
-	
-	current_state = TrapState.TRIGGERED
-	print("Spike trap triggered!")
-	
-	# Start activation delay
-	if activation_delay > 0:
-		activation_timer.start()
-		# Optional: Play a warning animation or sound
-	else:
-		_activate_trap()
-
-func _activate_trap():
-	# Play attack animation
-	if animated_sprite:
-		animated_sprite.play("attack")
-		# Connect to animation finished if not already connected
-		if not animated_sprite.animation_finished.is_connected(_on_attack_animation_finished):
-			animated_sprite.animation_finished.connect(_on_attack_animation_finished)
-	
-	# Deal damage to all bodies in range
-	for body in bodies_in_range:
-		_apply_damage(body)
-	
-	# Reduce uses if limited
-	if uses > 0:
-		current_uses -= 1
-		print("Spike trap uses remaining: ", current_uses)
+	if body and body.is_in_group("enemy"):
+		print("Enemy left spike trap: ", body.name)
 		
-		if current_uses <= 0:
-			_deplete_trap()
-			return
-	
-	# Start cooldown
-	current_state = TrapState.COOLDOWN
-	cooldown_timer.start()
+		# Remove from tracking
+		if body in enemies_in_trap:
+			enemies_in_trap.erase(body)
+			print("Enemy removed from trap. Remaining enemies: ", enemies_in_trap.size())
+		
+		# Update animation
+		update_trap_animation()
 
-func _apply_damage(body):
-	# Apply damage based on target type
-	if body.is_in_group("enemy"):
-		if body.has_method("take_damage"):
-			body.take_damage(damage, global_position)
-			print("Spike trap dealt ", damage, " damage to enemy: ", body.name)
-		elif body.has_method("hurt"):
-			body.hurt(damage)
-	elif body.is_in_group("player"):
-		if body.has_method("take_damage"):
-			body.take_damage(damage, global_position)
-			print("Spike trap dealt ", damage, " damage to player!")
-		elif body.has_method("get_damaged_by_enemy"):
-			body.get_damaged_by_enemy(damage, global_position)
-
-func _on_attack_animation_finished():
-	# Return to idle animation after attack
-	if animated_sprite and current_state != TrapState.DEPLETED:
-		animated_sprite.play("idel")
-
-func _reset_trap():
-	if current_state == TrapState.DEPLETED:
+func damage_and_slow_enemy(enemy):
+	if not is_instance_valid(enemy):
+		print("Tried to damage invalid enemy - removing from trap")
 		return
 	
-	current_state = TrapState.IDLE
-	print("Spike trap reset and ready")
+	print("Spike trap attacking enemy: ", enemy.name)
 	
-	# Check if any bodies are still in range
-	if bodies_in_range.size() > 0:
-		# Re-trigger if enemies still standing on trap
-		for body in bodies_in_range:
-			if _should_trigger_for(body):
-				_trigger_trap()
-				break
-
-func _deplete_trap():
-	current_state = TrapState.DEPLETED
-	print("Spike trap depleted!")
+	# Deal damage
+	if enemy.has_method("take_damage"):
+		enemy.take_damage(damage_amount)
+		print("Spike trap dealt ", damage_amount, " damage to ", enemy.name)
+	else:
+		print("ERROR: Enemy has no take_damage method!")
 	
-	# Optional: Change visual to show trap is used up
-	if animated_sprite:
-		animated_sprite.modulate = Color(0.5, 0.5, 0.5, 0.5)
+	# Apply slow effect
+	if enemy.has_method("apply_slow_effect"):
+		enemy.apply_slow_effect(slow_percentage, slow_duration)
+		print("Spike trap slowed ", enemy.name, " by ", slow_percentage * 100, "% for ", slow_duration, " seconds")
+	else:
+		print("ERROR: Enemy has no apply_slow_effect method!")
 	
-	# Optional: Disable detection
-	if detect_area:
-		detect_area.monitoring = false
+	# Visual effects
+	create_damage_effect()
+
+func update_trap_animation():
+	if not animated_sprite:
+		return
 	
-	# Optional: Remove trap after a delay
-	var remove_timer = Timer.new()
-	remove_timer.one_shot = true
-	remove_timer.wait_time = 3.0
-	remove_timer.timeout.connect(queue_free)
-	add_child(remove_timer)
-	remove_timer.start()
+	if is_trap_active:
+		# Trap is active - play attack animation
+		if animated_sprite.sprite_frames.has_animation("attack"):
+			if animated_sprite.animation != "attack":
+				animated_sprite.play("attack")
+				print("Spike trap activated - playing attack animation")
+		else:
+			print("Warning: No 'attack' animation found for spike trap")
+	else:
+		# Trap is inactive - play idle animation
+		if animated_sprite.sprite_frames.has_animation("idle"):
+			if animated_sprite.animation != "idle":
+				animated_sprite.play("idle")
+				print("Spike trap deactivated - playing idle animation")
 
-# Public methods for external control
-func activate_manually():
-	if current_state == TrapState.IDLE:
-		_trigger_trap()
+func create_activation_effect():
+	if not animated_sprite:
+		return
+	
+	# Quick flash when trap activates
+	var tween = create_tween()
+	tween.tween_property(animated_sprite, "modulate", Color.YELLOW * 1.3, 0.1)
+	tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.2)
 
-func set_damage(new_damage: int):
-	damage = new_damage
+func create_damage_effect():
+	if not animated_sprite:
+		return
+	
+	# Red flash when dealing damage
+	var tween = create_tween()
+	tween.tween_property(animated_sprite, "modulate", Color.RED * 1.5, 0.1)
+	tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.2)
 
-func set_uses(new_uses: int):
-	uses = new_uses
-	current_uses = new_uses
+# Debug function
+func _input(event):
+	if event.is_action_pressed("ui_select"):  # Space key for debug
+		print("=== SPIKE TRAP DEBUG INFO ===")
+		print("Trap name: ", name)
+		print("Trap position: ", global_position)
+		print("Is active: ", is_trap_active)
+		print("Enemies on trap: ", enemies_in_trap.size())
+		print("Damage amount: ", damage_amount)
+		print("Slow percentage: ", slow_percentage)
+		print("Slow duration: ", slow_duration)
+		
+		for enemy in enemies_in_trap.keys():
+			if is_instance_valid(enemy):
+				print("  - Enemy: ", enemy.name, " | Next damage in: ", enemies_in_trap[enemy], "s")
+			else:
+				print("  - Invalid enemy reference found")
+		
+		if detect_area:
+			print("Detection area monitoring: ", detect_area.monitoring)
+			print("Detection collision mask: ", detect_area.collision_mask)
+			var bodies = detect_area.get_overlapping_bodies()
+			print("Bodies currently overlapping: ", bodies.size())
+			for body in bodies:
+				print("  - ", body.name, " | Groups: ", body.get_groups())
+		else:
+			print("ERROR: No detection area found!")
+		
+		if animated_sprite:
+			print("Current animation: ", animated_sprite.animation)
+			print("Available animations: ", animated_sprite.sprite_frames.get_animation_names() if animated_sprite.sprite_frames else "No sprite frames")
+		else:
+			print("ERROR: No animated sprite found!")
 
-func get_state() -> TrapState:
-	return current_state
-
-func reset():
-	current_state = TrapState.IDLE
-	current_uses = uses
-	bodies_in_range.clear()
-	if animated_sprite:
-		animated_sprite.play("idel")
-		animated_sprite.modulate = Color.WHITE
+# Optional: Add a method to manually trigger the trap (useful for testing)
+func trigger_trap_effect(target_body):
+	if target_body and target_body.is_in_group("enemy"):
+		damage_and_slow_enemy(target_body)
+		print("Manually triggered trap effect on: ", target_body.name)

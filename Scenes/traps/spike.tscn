@@ -82,20 +82,30 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_83lcn"]
-size = Vector2(21, 23)
+size = Vector2(57, 71)
 
 [node name="Spike" type="Node2D"]
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(3, 0)
-sprite_frames = SubResource("SpriteFrames_4innf")
-animation = &"attack"
-autoplay = "idel"
-frame_progress = 0.744104
-
-[node name="detect area" type="Area2D" parent="."]
 script = ExtResource("2_0mabl")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="detect area"]
-position = Vector2(2, -3)
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = -1
+position = Vector2(6, -5)
+scale = Vector2(2.48, 2.48)
+sprite_frames = SubResource("SpriteFrames_4innf")
+animation = &"idel"
+autoplay = "idel"
+frame_progress = 0.158323
+
+[node name="detect_area" type="Area2D" parent="."]
+position = Vector2(2, 0)
+collision_layer = 3
+collision_mask = 3
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="detect_area"]
+position = Vector2(0.5, -13.5)
 shape = SubResource("RectangleShape2D_83lcn")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="detect_area"]
+position = Vector2(60, 6)
+polygon = PackedVector2Array(-44, 1, -45, -20, -70, -20, -75, 3, -59, 7)

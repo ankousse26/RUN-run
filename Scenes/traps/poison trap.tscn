@@ -39,7 +39,7 @@ size = Vector2(34, 28.5)
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_xm4in")
 animation = &"trap"
-frame_progress = 0.0870866
+frame_progress = 0.437465
 
 [node name="Area2D" type="Area2D" parent="."]
 

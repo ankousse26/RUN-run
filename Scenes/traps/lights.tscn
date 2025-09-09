@@ -56,7 +56,7 @@ size = Vector2(18, 27)
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_h3w7e")
 animation = &"light"
-frame_progress = 0.829625
+frame_progress = 0.93147
 
 [node name="Detect" type="Area2D" parent="."]
 position = Vector2(5, -2)
