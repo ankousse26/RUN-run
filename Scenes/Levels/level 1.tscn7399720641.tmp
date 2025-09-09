@@ -106,7 +106,16 @@ position = Vector2(355, 305)
 
 [node name="enemy" parent="." instance=ExtResource("4_vtplq")]
 position = Vector2(85, 365)
+damage = null
 attack_cooldown = 0.5
+min_distance_to_player = null
+separation_force = null
+light_fear_distance = null
+retreat_speed_multiplier = null
+patrol_speed = null
+suspicion_duration = null
+max_health = null
+current_health = null
 
 [node name="Key" parent="." instance=ExtResource("5_jshm2")]
 position = Vector2(788, 381)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://cudovxhlum7tf"]
+[gd_scene load_steps=19 format=4 uid="uid://cudovxhlum7tf"]
 
 [ext_resource type="Texture2D" uid="uid://cx32oallnwaao" path="res://assets/env/tilest.png" id="1_c1vft"]
 [ext_resource type="PackedScene" uid="uid://bbf26dkp3e63v" path="res://Scenes/ExitDoor.tscn" id="2_77md0"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://d2y5mvlsm835v" path="res://Scenes/elments Scens/metal.tscn" id="12_elx36"]
 [ext_resource type="PackedScene" uid="uid://cnfagaoukdgwu" path="res://Scenes/elments Scens/rope.tscn" id="13_ol2ii"]
 [ext_resource type="PackedScene" uid="uid://k04e3deijog5" path="res://Scenes/elments Scens/wood.tscn" id="14_0jk83"]
+[ext_resource type="PackedScene" uid="uid://cgto2ikthcj3v" path="res://Scenes/traps/poison trap.tscn" id="15_qthsg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sgcd8"]
 texture = ExtResource("1_c1vft")
@@ -142,3 +143,6 @@ position = Vector2(-132, 263)
 
 [node name="CollectibleItem" parent="." instance=ExtResource("14_0jk83")]
 position = Vector2(-132, 447)
+
+[node name="PoisonTrap" parent="." instance=ExtResource("15_qthsg")]
+position = Vector2(1027, 210)

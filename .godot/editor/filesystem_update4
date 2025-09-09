@@ -9,3 +9,5 @@ res://Scenes/BOSSES/BOSS1.tscn
 res://Scenes/player and monsters scenes/enemy.tscn
 res://Scenes/traps/spike.gd
 res://Script/enemy scripts/enemy.gd
+res://Scenes/traps/poison trap.tscn
+res://Scenes/traps/poison_trap.gd

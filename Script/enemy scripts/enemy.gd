@@ -9,7 +9,19 @@ extends CharacterBody2D
 @export var retreat_speed_multiplier: float = 1.5
 @export var patrol_speed: float = 80.0
 @export var suspicion_duration: float = 3.0
+# Slow effect variables
+var is_slowed: bool = false
+var original_speed: float
+var original_patrol_speed: float
+var slow_effect_timer: float = 0.0
 
+# ADD THESE POISON VARIABLES:
+var is_poisoned: bool = false
+var poison_damage_per_tick: int = 0
+var poison_tick_interval: float = 1.0
+var poison_duration: float = 0.0
+var poison_timer: float = 0.0
+var poison_tick_timer: float = 0.0
 # Health and damage system
 @export var max_health: int = 100
 @export var current_health: int = 100
@@ -32,11 +44,7 @@ var patrol_direction: Vector2 = Vector2.RIGHT
 var patrol_timer: float = 0.0
 var retreat_cooldown: float = 0.0
 
-# Slow effect variables
-var is_slowed: bool = false
-var original_speed: float
-var original_patrol_speed: float
-var slow_effect_timer: float = 0.0
+
 
 func _ready():
 	add_to_group("enemy")
@@ -456,6 +464,10 @@ func _input(event):
 		print("Speed setting: ", speed)
 		print("Health: ", current_health, "/", max_health)
 		print("Is slowed: ", is_slowed)
+		print("Is poisoned: ", is_poisoned)
+		if is_poisoned:
+			print("  Poison damage per tick: ", poison_damage_per_tick)
+			print("  Poison time remaining: ", poison_timer)
 		print("Groups: ", get_groups())
 		
 		if detection_area:
