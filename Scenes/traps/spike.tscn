@@ -1,7 +1,7 @@
 [gd_scene load_steps=13 format=3 uid="uid://dw68iuf2g07"]
 
 [ext_resource type="Texture2D" uid="uid://d36tf1ubaurb3" path="res://assets/traps/Spike trap.png" id="1_83lcn"]
-[ext_resource type="Script" uid="uid://7dmglf3rhhy4" path="res://Scenes/traps/spike.gd" id="2_0mabl"]
+[ext_resource type="Script" uid="uid://7dmglf3rhhy4" path="res://Script/traps scripts/spike.gd" id="2_0mabl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0mabl"]
 atlas = ExtResource("1_83lcn")

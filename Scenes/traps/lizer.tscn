@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://bvy4q6ptfhsob"]
+[gd_scene load_steps=12 format=3 uid="uid://bvy4q6ptfhsob"]
 
 [ext_resource type="Texture2D" uid="uid://b702bp53uhao" path="res://assets/traps/lizer.png" id="1_cwijd"]
+[ext_resource type="Script" uid="uid://b7raimly60pr5" path="res://Scenes/traps/lizer.gd" id="1_umtef"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_umtef"]
 atlas = ExtResource("1_cwijd")
@@ -39,12 +40,23 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_waqio"]
-radius = 133.015
+radius = 145.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_di36v"]
 size = Vector2(18, 32)
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_umtef"]
+particle_flag_disable_z = true
+initial_velocity_min = 100.0
+initial_velocity_max = 200.0
+gravity = Vector3(0, 98, 0)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8csgq"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 98, 0)
+
 [node name="Lizer" type="Node2D"]
+script = ExtResource("1_umtef")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_hxupj")
@@ -52,12 +64,38 @@ animation = &"idel"
 frame_progress = 0.583477
 
 [node name="Detect" type="Area2D" parent="."]
+monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Detect"]
 shape = SubResource("CircleShape2D_waqio")
 debug_color = Color(0.620006, 0.445729, 0.772049, 0.42)
 
 [node name="Area2D" type="Area2D" parent="."]
+monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_di36v")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(7, -22, 10, -3, 11, 19, -1, 22, -12, 19, -11, -2, -8, -22)
+
+[node name="LaserBeam" type="Line2D" parent="."]
+visible = false
+width = 8.0
+default_color = Color(0.824835, 0, 0.245929, 1)
+
+[node name="LaserParticles" type="GPUParticles2D" parent="."]
+scale = Vector2(1.5, 1.5)
+emitting = false
+amount = 50
+process_material = SubResource("ParticleProcessMaterial_umtef")
+
+[node name="ChargeParticles" type="GPUParticles2D" parent="."]
+modulate = Color(0.909804, 0.945098, 0.615686, 1)
+self_modulate = Color(0.901961, 0.835294, 0.109804, 1)
+scale = Vector2(0.3, 0.8)
+emitting = false
+amount = 30
+process_material = SubResource("ParticleProcessMaterial_8csgq")

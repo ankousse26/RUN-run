@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://b7wq7gwd751du"]
+[gd_scene load_steps=11 format=3 uid="uid://b7wq7gwd751du"]
 
 [ext_resource type="Texture2D" uid="uid://yxdih0400u1l" path="res://assets/traps/tornado trap.png" id="1_cp4mo"]
+[ext_resource type="Script" uid="uid://b7we3fplplwrg" path="res://Scenes/traps/tornado.gd" id="1_skjg2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_skjg2"]
 atlas = ExtResource("1_cp4mo")
@@ -53,22 +54,32 @@ animations = [{
 "texture": SubResource("AtlasTexture_867wx")
 }],
 "loop": true,
-"name": &"idel",
+"name": &"idle",
 "speed": 2.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cp4mo"]
-size = Vector2(25, 23)
+size = Vector2(26, 25)
 
 [node name="Tornado" type="Node2D"]
+script = ExtResource("1_skjg2")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_025ve")
-animation = &"idel"
-frame_progress = 0.348642
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.375907
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(0, -2.5)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+position = Vector2(0, 2.5)
+polygon = PackedVector2Array(-4, -10, 5, -10, 7, -3, 7, 10, 0, 12, -7, 10, -7, -4)
 
 [node name="Area2D" type="Area2D" parent="."]
+monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(-0.5, -3.5)
+position = Vector2(0, -2.5)
 shape = SubResource("RectangleShape2D_cp4mo")

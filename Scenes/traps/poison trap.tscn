@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://cgto2ikthcj3v"]
 
-[ext_resource type="Script" uid="uid://c2egy1k3ucsjg" path="res://Scenes/traps/poison_trap.gd" id="1_3j5pg"]
+[ext_resource type="Script" uid="uid://c2egy1k3ucsjg" path="res://Script/traps scripts/poison_trap.gd" id="1_3j5pg"]
 [ext_resource type="Texture2D" uid="uid://c1buh4ey7tgvc" path="res://assets/traps/pois.png" id="1_w37te"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3j5pg"]
@@ -38,7 +38,9 @@ size = Vector2(34, 28.5)
 [node name="PoisonTrap" type="Node2D"]
 scale = Vector2(1.02452, 1.00773)
 script = ExtResource("1_3j5pg")
-slow_percentage = 13.03
+poison_damage_per_tick = 6
+slow_percentage = 17.88
+activation_cooldown = 0.48
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 z_index = -1

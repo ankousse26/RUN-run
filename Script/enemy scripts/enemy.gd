@@ -9,22 +9,27 @@ extends CharacterBody2D
 @export var retreat_speed_multiplier: float = 1.5
 @export var patrol_speed: float = 80.0
 @export var suspicion_duration: float = 3.0
+
 # Slow effect variables
 var is_slowed: bool = false
 var original_speed: float
 var original_patrol_speed: float
 var slow_effect_timer: float = 0.0
 
-# ADD THESE POISON VARIABLES:
+# POISON VARIABLES
 var is_poisoned: bool = false
 var poison_damage_per_tick: int = 0
 var poison_tick_interval: float = 1.0
 var poison_duration: float = 0.0
 var poison_timer: float = 0.0
 var poison_tick_timer: float = 0.0
+
 # Health and damage system
 @export var max_health: int = 100
 @export var current_health: int = 100
+
+# Death system
+var is_dead: bool = false
 
 # References
 @onready var detection_area = $"DetectionRange"
@@ -44,7 +49,12 @@ var patrol_direction: Vector2 = Vector2.RIGHT
 var patrol_timer: float = 0.0
 var retreat_cooldown: float = 0.0
 
-
+# SAFE AREA LIGHT VARIABLES - NEW
+var in_safe_area_light: bool = false
+var fleeing_from_safe_area: bool = false
+var safe_area_position: Vector2 = Vector2.ZERO
+var attacks_disabled: bool = false
+var safe_area_flee_speed: float = 200.0  # Faster flee speed for safe areas
 
 func _ready():
 	add_to_group("enemy")
@@ -78,6 +88,10 @@ func _ready():
 	patrol_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
 
 func _physics_process(delta):
+	# If dead, don't process anything - STAY COMPLETELY STILL
+	if is_dead:
+		return
+	
 	# Handle slow effect timer
 	if is_slowed:
 		slow_effect_timer -= delta
@@ -99,27 +113,52 @@ func _physics_process(delta):
 	if player and player.has_method("get_flashlight_state"):
 		player_flashlight_on = player.get_flashlight_state()
 	
-	# PRIORITY 1: Retreat if flashlight is ON (anywhere) or if directly in light
-	if (player_flashlight_on and player and global_position.distance_to(player.global_position) < 300) or (in_player_light and retreat_cooldown <= 0):
+	# PRIORITY 1: Flee from safe area lights (HIGHEST PRIORITY)
+	if fleeing_from_safe_area:
+		handle_safe_area_flee(delta)
+	# PRIORITY 2: Retreat if flashlight is ON (anywhere) or if directly in player light
+	elif (player_flashlight_on and player and global_position.distance_to(player.global_position) < 300) or (in_player_light and retreat_cooldown <= 0):
 		handle_smart_light_retreat(delta)
-	# PRIORITY 2: Chase behavior - only if flashlight is OFF
+	# PRIORITY 3: Chase behavior - only if flashlight is OFF
 	elif is_chasing and player and not player_flashlight_on:
 		handle_chase_behavior_fixed(delta)
-	# PRIORITY 3: Suspicious behavior - only if flashlight is OFF
+	# PRIORITY 4: Suspicious behavior - only if flashlight is OFF
 	elif is_suspicious and not player_flashlight_on:
 		handle_suspicious_behavior(delta)
-	# PRIORITY 4: Patrol behavior
+	# PRIORITY 5: Patrol behavior
 	else:
 		handle_patrol_behavior(delta)
 	
-	# DAMAGE CHECK - only if flashlight is OFF
-	if not player_flashlight_on:
+	# DAMAGE CHECK - only if flashlight is OFF and not fleeing from safe area
+	if not player_flashlight_on and not fleeing_from_safe_area:
 		check_collision_with_player_fixed()
 	
 	move_and_slide()
 	
 	# Update animation based on movement
 	update_animation()
+
+func handle_safe_area_flee(delta):
+	"""Handle fleeing from safe area lights - HIGHEST PRIORITY"""
+	print(name, " fleeing from safe area at ", safe_area_position)
+	
+	# Calculate flee direction (away from safe area)
+	var flee_direction = (global_position - safe_area_position).normalized()
+	
+	# If too close to calculate direction, use random direction
+	if flee_direction.length() < 0.1:
+		flee_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
+	
+	# Apply flee velocity at high speed
+	velocity = flee_direction * safe_area_flee_speed
+	
+	# Add some randomness to prevent clustering
+	var random_offset = Vector2(randf_range(-50, 50), randf_range(-50, 50))
+	velocity += random_offset
+	
+	# Visual indicator - turn yellow when fleeing
+	if animated_sprite:
+		animated_sprite.modulate = Color.YELLOW
 
 func handle_smart_light_retreat(delta):
 	if not player:
@@ -186,7 +225,7 @@ func handle_patrol_behavior(delta):
 		patrol_timer = randf_range(0.5, 1.5)
 
 func check_collision_with_player_fixed():
-	if not player or not can_attack:
+	if not player or not can_attack or attacks_disabled:
 		return
 	
 	# Simple collision check
@@ -197,8 +236,8 @@ func check_collision_with_player_fixed():
 		if collider and collider.is_in_group("player"):
 			print("COLLISION DETECTED WITH PLAYER!")
 			
-			# Attack immediately if not in light
-			if not in_player_light and not has_collided_with_player:
+			# Attack immediately if not in light and attacks not disabled
+			if not in_player_light and not in_safe_area_light and not has_collided_with_player:
 				has_collided_with_player = true
 				attack_player_simple()
 				
@@ -212,8 +251,8 @@ func check_collision_with_player_fixed():
 	has_collided_with_player = false
 
 func attack_player_simple():
-	if not player or not can_attack or in_player_light:
-		print("Attack blocked - player:", player != null, " can_attack:", can_attack, " in_light:", in_player_light)
+	if not player or not can_attack or in_player_light or in_safe_area_light or attacks_disabled:
+		print("Attack blocked - player:", player != null, " can_attack:", can_attack, " in_player_light:", in_player_light, " in_safe_area:", in_safe_area_light, " attacks_disabled:", attacks_disabled)
 		return
 		
 	print("ATTACKING PLAYER FOR ", damage, " DAMAGE!")
@@ -271,20 +310,63 @@ func push_back_from_player():
 	
 	print("Enemy pushed back from player after attack!")
 
-# DAMAGE AND SLOW SYSTEM
-func take_damage(damage_amount: int):
+func take_damage(damage_amount: int, damage_source_position: Vector2 = Vector2.ZERO):
 	current_health -= damage_amount
 	print("Enemy took ", damage_amount, " damage! Health: ", current_health, "/", max_health)
 	
-	# Visual damage effect
-	if animated_sprite:
+	# Check if enemy will die from this damage
+	var will_die = current_health <= 0
+	
+	# Visual damage effect - but ONLY if enemy won't die
+	if animated_sprite and not will_die:
 		animated_sprite.modulate = Color.RED
 		var tween = create_tween()
 		tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.3)
 	
+	# Apply pushback if damage source position is provided (trap damage)
+	if damage_source_position != Vector2.ZERO and not will_die:
+		apply_trap_pushback(damage_source_position)
+	
 	# Check if dead
-	if current_health <= 0:
+	if will_die:
 		die()
+
+func apply_trap_pushback(trap_position: Vector2):
+	print("Enemy receiving pushback from trap at: ", trap_position)
+	
+	# Calculate pushback direction (away from trap)
+	var pushback_direction = (global_position - trap_position).normalized()
+	
+	# If too close to calculate direction, use random direction
+	if pushback_direction.length() < 0.1:
+		pushback_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
+		print("Using random pushback direction")
+	
+	# Apply strong pushback force (stronger than normal pushback)
+	var pushback_force = pushback_direction * 250.0
+	velocity = pushback_force
+	
+	# Temporarily reduce speed to let pushback take effect
+	var current_speed = speed
+	var current_patrol_speed = patrol_speed
+	speed = speed * 0.2  # Even slower to let trap pushback be more dramatic
+	patrol_speed = patrol_speed * 0.2
+	
+	# Restore normal speed after pushback
+	get_tree().create_timer(0.8).timeout.connect(func():
+		speed = current_speed
+		patrol_speed = current_patrol_speed
+		print("Enemy speed restored after trap pushback")
+	)
+	
+	# Visual effect for trap pushback
+	if animated_sprite:
+		animated_sprite.modulate = Color.YELLOW * 1.4
+		var scale_tween = create_tween()
+		scale_tween.parallel().tween_property(animated_sprite, "scale", Vector2(1.2, 1.2), 0.1)
+		scale_tween.tween_property(animated_sprite, "scale", Vector2(1.0, 1.0), 0.4)
+	
+	print("Enemy pushed back from trap with force: ", pushback_force.length())
 
 func apply_slow_effect(slow_percentage: float, duration: float):
 	if is_slowed:
@@ -324,8 +406,70 @@ func remove_slow_effect():
 		animated_sprite.speed_scale = 1.0
 
 func die():
+	if is_dead:
+		return  # Already dead, don't run again
+	
 	print("Enemy died!")
-	queue_free()
+	is_dead = true
+	
+	# IMMEDIATELY stop ALL movement and effects
+	velocity = Vector2.ZERO
+	
+	# Kill all active tweens that might still be affecting the enemy
+	var tweens = get_tree().get_processed_tweens()
+	for tween in tweens:
+		if tween.is_valid():
+			tween.kill()
+	
+	# Reset all speed values to prevent any restoration timers from affecting us
+	speed = 0.0
+	patrol_speed = 0.0
+	
+	# Disable collision so dead body doesn't interfere with gameplay
+	collision_layer = 0
+	collision_mask = 0
+	
+	# Disable detection area
+	if detection_area:
+		detection_area.monitoring = false
+		detection_area.monitorable = false
+	
+	# Remove from enemy group so it won't be targeted
+	remove_from_group("enemy")
+	add_to_group("dead_enemy")  # Add to dead group if needed for cleanup later
+	
+	# Reset states
+	is_chasing = false
+	is_suspicious = false
+	can_attack = false
+	in_player_light = false
+	in_safe_area_light = false
+	fleeing_from_safe_area = false
+	is_slowed = false
+	
+	# Clear any ongoing effect timers
+	slow_effect_timer = 0.0
+	retreat_cooldown = 0.0
+	
+	# FORCE PLAY DEATH ANIMATION
+	if animated_sprite:
+		# Stop any current animation first
+		animated_sprite.stop()
+		
+		# Check if death animation exists and play it
+		if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("dead"):
+			animated_sprite.play("dead")
+			print("Playing death animation: dead")
+		else:
+			print("Available animations: ", animated_sprite.sprite_frames.get_animation_names() if animated_sprite.sprite_frames else "No sprite frames")
+			print("WARNING: No 'dead' animation found!")
+		
+		# Add death visual effect after a short delay (FIXED TWEEN SYNTAX)
+		var death_tween = create_tween()
+		death_tween.tween_interval(1.0)  # Wait 1 second for death animation to play
+		death_tween.tween_property(animated_sprite, "modulate", Color.GRAY * 0.8, 1.0)
+	
+	print("Enemy body will remain on the ground - all movement stopped")
 
 func handle_player_push(collision):
 	if not player:
@@ -378,9 +522,24 @@ func update_animation():
 	if not animated_sprite:
 		return
 	
+	# If dead, don't change animation (keep death animation)
+	if is_dead:
+		return
+	
 	# Choose animation based on state and movement
-	if in_player_light:
-		# Frightened animation when in light
+	if fleeing_from_safe_area:
+		# Special animation for fleeing from safe area
+		if animated_sprite.sprite_frames.has_animation("flee"):
+			if animated_sprite.animation != "flee":
+				animated_sprite.play("flee")
+		elif animated_sprite.sprite_frames.has_animation("run"):
+			if animated_sprite.animation != "run":
+				animated_sprite.play("run")
+		elif velocity.length() > 10:
+			if animated_sprite.sprite_frames.has_animation("walk"):
+				animated_sprite.play("walk")
+	elif in_player_light:
+		# Frightened animation when in player light
 		if animated_sprite.sprite_frames.has_animation("frightened"):
 			if animated_sprite.animation != "frightened":
 				animated_sprite.play("frightened")
@@ -403,19 +562,70 @@ func update_animation():
 		if animated_sprite.sprite_frames.has_animation("idle"):
 			animated_sprite.play("idle")
 
-# Light detection functions
+# SAFE AREA LIGHT METHODS - Called by safe area script
 func enter_light():
-	print("ENEMY ENTERED LIGHT!")
-	if not in_player_light:
-		in_player_light = true
-		velocity = Vector2.ZERO
-		print("Enemy entered player's light - RETREATING!")
+	"""Called when enemy enters the safe area light"""
+	print(name, " ENTERED SAFE AREA LIGHT - FLEEING!")
+	
+	in_safe_area_light = true
+	fleeing_from_safe_area = true
+	
+	# Find the nearest safe area to flee from
+	find_nearest_safe_area()
+	
+	# Visual indicator
+	if animated_sprite:
+		animated_sprite.modulate = Color.YELLOW
 
 func exit_light():
-	print("ENEMY EXITED LIGHT!")
+	"""Called when enemy exits the safe area light"""
+	print(name, " EXITED SAFE AREA LIGHT - resuming normal behavior")
+	
+	in_safe_area_light = false
+	fleeing_from_safe_area = false
+	
+	# Restore normal appearance
+	if animated_sprite:
+		animated_sprite.modulate = Color.WHITE
+
+func find_nearest_safe_area():
+	"""Find the nearest safe area to flee from"""
+	var safe_areas = get_tree().get_nodes_in_group("safe_areas")
+	if safe_areas.is_empty():
+		print("Warning: No safe areas found for fleeing")
+		return
+	
+	var nearest_distance = INF
+	for safe_area in safe_areas:
+		var distance = global_position.distance_to(safe_area.global_position)
+		if distance < nearest_distance:
+			nearest_distance = distance
+			safe_area_position = safe_area.global_position
+	
+	print(name, " fleeing from safe area at: ", safe_area_position)
+
+func disable_attacks():
+	"""Disable enemy attacks (called when player is in safe area)"""
+	attacks_disabled = true
+	print(name, " attacks DISABLED - player in safe area")
+
+func enable_attacks():
+	"""Re-enable enemy attacks (called when player leaves safe area)"""
+	attacks_disabled = false
+	print(name, " attacks ENABLED - player vulnerable")
+
+# Player light detection functions (for flashlight)
+func enter_player_light():
+	print("ENEMY ENTERED PLAYER LIGHT!")
+	if not in_player_light:
+		in_player_light = true
+		print("Enemy entered player's flashlight - RETREATING!")
+
+func exit_player_light():
+	print("ENEMY EXITED PLAYER LIGHT!")
 	in_player_light = false
 	retreat_cooldown = 0.0
-	print("Enemy left player's light")
+	print("Enemy left player's flashlight")
 
 # Detection signals
 func _on_detection_area_body_entered(body):
@@ -425,9 +635,11 @@ func _on_detection_area_body_entered(body):
 	
 	if body and body.is_in_group("player"):
 		player = body
-		is_chasing = true
-		is_suspicious = false
-		print("PLAYER DETECTED - STARTING CHASE!")
+		# Only chase if not fleeing from safe area
+		if not fleeing_from_safe_area:
+			is_chasing = true
+			is_suspicious = false
+		print("PLAYER DETECTED - Enemy response: chase=", is_chasing, " flee=", fleeing_from_safe_area)
 		print("Player reference set to: ", player.name)
 	else:
 		print("Detection triggered but not by player")
@@ -458,6 +670,10 @@ func _input(event):
 			print("Distance to player: ", global_position.distance_to(player.global_position))
 		print("Is chasing: ", is_chasing)
 		print("In player light: ", in_player_light)
+		print("In safe area light: ", in_safe_area_light)
+		print("Fleeing from safe area: ", fleeing_from_safe_area)
+		print("Attacks disabled: ", attacks_disabled)
+		print("Safe area position: ", safe_area_position)
 		print("Can attack: ", can_attack)
 		print("Has collided: ", has_collided_with_player)
 		print("Current velocity: ", velocity)

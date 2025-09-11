@@ -1,4 +1,8 @@
 CollisionPolygon2D
+StaticBody2D
+PointLight2D
+GPUParticles2D
+Line2D
 CollisionShape2D
 Area2D
 AnimatedSprite2D
@@ -8,8 +12,3 @@ ScrollContainer
 HSeparator
 Button
 Control
-Label
-HBoxContainer
-MarginContainer
-Panel
-ColorRect

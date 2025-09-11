@@ -1,6 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://bhcshbd3ry6oe"]
+[gd_scene load_steps=12 format=3 uid="uid://bhcshbd3ry6oe"]
 
+[ext_resource type="Script" uid="uid://cpvp114paas0a" path="res://Scenes/traps/lights.gd" id="1_b13hf"]
 [ext_resource type="Texture2D" uid="uid://c0bf0jv5wjygg" path="res://assets/traps/chm3a-Sheet-export.png" id="1_q3r61"]
+[ext_resource type="Texture2D" uid="uid://e4ps7fdpw3ri" path="res://assets/Characters/light player.png" id="3_rt8xn"]
+[ext_resource type="Texture2D" uid="uid://bskymb56pttf" path="res://icon.svg" id="4_m4wxr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_b13hf"]
 atlas = ExtResource("1_q3r61")
@@ -42,21 +45,46 @@ animations = [{
 }],
 "loop": true,
 "name": &"light",
-"speed": 9.0
+"speed": 12.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xx4fe"]
-radius = 65.9242
+radius = 89.0056
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_miput"]
-size = Vector2(18, 27)
-
-[node name="Lights" type="Node2D"]
+[node name="Lights" type="Node2D" groups=["safe_areas"]]
+script = ExtResource("1_b13hf")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_h3w7e")
 animation = &"light"
-frame_progress = 0.93147
+autoplay = "light"
+frame_progress = 0.712941
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+light_mask = 31
+visibility_layer = 31
+texture_filter = 1
+position = Vector2(10, -4.76837e-07)
+scale = Vector2(1.93424, 1.53333)
+enabled = false
+color = Color(0.996078, 0.854902, 0.756863, 0.415686)
+range_item_cull_mask = 1023
+texture = ExtResource("3_rt8xn")
+texture_scale = 1.5
+height = 1.0
+
+[node name="PointLight2D2" type="PointLight2D" parent="."]
+light_mask = 31
+visibility_layer = 31
+texture_filter = 1
+position = Vector2(10, -4.76837e-07)
+scale = Vector2(0.33639, 0.266667)
+enabled = false
+color = Color(0.996078, 0.854902, 0.756863, 0.415686)
+range_item_cull_mask = 1023
+texture = ExtResource("3_rt8xn")
+texture_scale = 1.5
+height = 1.0
 
 [node name="Detect" type="Area2D" parent="."]
 position = Vector2(5, -2)
@@ -65,8 +93,15 @@ position = Vector2(5, -2)
 shape = SubResource("CircleShape2D_xx4fe")
 debug_color = Color(0.620006, 0.445729, 0.772049, 0.42)
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Area2D" type="StaticBody2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(4, 8.5)
-shape = SubResource("RectangleShape2D_miput")
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
+polygon = PackedVector2Array(-2, -3, -4, 13, -4, 18, 2, 20, 6, 20, 11, 18, 11, 13, 9, -3, 5, -9, 2, -9)
+
+[node name="Icon" type="Sprite2D" parent="."]
+visible = false
+z_index = -7
+position = Vector2(1, 0)
+scale = Vector2(2.39063, 2.14063)
+texture = ExtResource("4_m4wxr")
+metadata/_edit_lock_ = true
