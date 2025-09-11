@@ -53,21 +53,24 @@ radius = 89.0056
 
 [node name="Lights" type="Node2D" groups=["safe_areas"]]
 script = ExtResource("1_b13hf")
+light_radius = 120.0
+light_intensity = 0.65
+detection_radius = 100.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_h3w7e")
 animation = &"light"
 autoplay = "light"
-frame_progress = 0.712941
+frame_progress = 0.857132
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
 light_mask = 31
 visibility_layer = 31
 texture_filter = 1
-position = Vector2(10, -4.76837e-07)
-scale = Vector2(1.93424, 1.53333)
+position = Vector2(9.49999, -1.33514e-05)
+scale = Vector2(2.93798, 2.01667)
 enabled = false
-color = Color(0.996078, 0.854902, 0.756863, 0.415686)
+color = Color(0.996078, 0.854902, 0.756863, 0.756863)
 range_item_cull_mask = 1023
 texture = ExtResource("3_rt8xn")
 texture_scale = 1.5
@@ -80,7 +83,7 @@ texture_filter = 1
 position = Vector2(10, -4.76837e-07)
 scale = Vector2(0.33639, 0.266667)
 enabled = false
-color = Color(0.996078, 0.854902, 0.756863, 0.415686)
+color = Color(0.996078, 0.854902, 0.756863, 0.509804)
 range_item_cull_mask = 1023
 texture = ExtResource("3_rt8xn")
 texture_scale = 1.5

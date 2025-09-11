@@ -283,5 +283,5 @@ position = Vector2(147, 275)
 [node name="Lizer" parent="." groups=["traps"] instance=ExtResource("26_1gd2w")]
 position = Vector2(250, 207)
 
-[node name="Lights" parent="." groups=["safe_areas", "traps"] instance=ExtResource("27_rxagx")]
+[node name="Lights" parent="." groups=["traps"] instance=ExtResource("27_rxagx")]
 position = Vector2(-215, 212)

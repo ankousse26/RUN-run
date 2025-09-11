@@ -570,12 +570,18 @@ func enter_light():
 	in_safe_area_light = true
 	fleeing_from_safe_area = true
 	
+	# STOP ALL OTHER BEHAVIORS - exactly like flashlight
+	is_chasing = false
+	is_suspicious = false
+	
 	# Find the nearest safe area to flee from
 	find_nearest_safe_area()
 	
 	# Visual indicator
 	if animated_sprite:
 		animated_sprite.modulate = Color.YELLOW
+	
+	print(name, " stopped chasing and is now ONLY fleeing from safe area!")
 
 func exit_light():
 	"""Called when enemy exits the safe area light"""
