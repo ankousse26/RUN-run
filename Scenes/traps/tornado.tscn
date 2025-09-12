@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://b7wq7gwd751du"]
 
 [ext_resource type="Texture2D" uid="uid://yxdih0400u1l" path="res://assets/traps/tornado trap.png" id="1_cp4mo"]
-[ext_resource type="Script" uid="uid://b7we3fplplwrg" path="res://Scenes/traps/tornado.gd" id="1_skjg2"]
+[ext_resource type="Script" uid="uid://b7we3fplplwrg" path="res://Script/traps scripts/tornado.gd" id="1_skjg2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_skjg2"]
 atlas = ExtResource("1_cp4mo")

@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://bvy4q6ptfhsob"]
 
 [ext_resource type="Texture2D" uid="uid://b702bp53uhao" path="res://assets/traps/lizer.png" id="1_cwijd"]
-[ext_resource type="Script" uid="uid://b7raimly60pr5" path="res://Scenes/traps/lizer.gd" id="1_umtef"]
+[ext_resource type="Script" uid="uid://b7raimly60pr5" path="res://Script/traps scripts/lizer.gd" id="1_umtef"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_umtef"]
 atlas = ExtResource("1_cwijd")

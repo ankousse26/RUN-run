@@ -1,34 +1,15 @@
 extends Control
 
-# This script replaces your existing crafting_ui.gd
-# First, let's fix your UI structure in the editor
-
-# STEP 1: Fix your CraftingUI scene structure in Godot Editor:
-# 
-# CraftingUI (Control) - Set to FULL_RECT preset
-# ├── Background (ColorRect) - Semi-transparent black overlay - FULL_RECT
-# └── CenterContainer - FULL_RECT preset
-#     └── Panel (Panel) - Custom size 600x400
-#         ├── MarginContainer - FULL_RECT with margins
-#         │   └── VBoxContainer
-#         │       ├── Header (HBoxContainer)
-#         │       │   ├── TitleLabel (Label) - "Crafting Bench"
-#         │       │   ├── Spacer (Control) - Expand horizontal
-#         │       │   └── CloseButton (Button) - "X"
-#         │       ├── HSeparator
-#         │       └── ScrollContainer - Expand both
-#         │           └── RecipeList (VBoxContainer)
-
 # Signals
 signal craft_item_requested(item_name)
 signal close_requested
 
-# UI References - UPDATE THESE PATHS to match your new structure
+# UI References - UPDATED PATHS to match your structure
 @onready var background = $Background
-@onready var main_panel = $CenterContainer/Panel
-@onready var recipe_container = $CenterContainer/Panel/MarginContainer/VBoxContainer/ScrollContainer/RecipeList
-@onready var close_button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Header/CloseButton
-@onready var title_label = $CenterContainer/Panel/MarginContainer/VBoxContainer/Header/TitleLabel
+@onready var main_panel = $ScrollContainer/Panel
+@onready var recipe_container = $ScrollContainer/Panel/MarginContainer/VBoxContainer/ScrollContainer/RecipeList
+@onready var close_button = $ScrollContainer/Panel/MarginContainer/VBoxContainer/Header/CloseButton
+@onready var title_label = $ScrollContainer/Panel/MarginContainer/VBoxContainer/Header/TitleLabel
 
 var recipe_button_scene = null
 var player = null
@@ -74,25 +55,94 @@ var recipes = {
 }
 
 func _ready():
+	print("\n=== CRAFTING UI DEBUG START ===")
+	print("Total recipes defined: ", recipes.size())
+		# SIMPLE PATH TEST
+	print("TESTING PATHS:")
+	var test_path = "ScrollContainer/Panel/MarginContainer/VBoxContainer/ScrollContainer/RecipeList"
+	var node = get_node_or_null(test_path)
+	print("Found RecipeList: ", node != null)
+	if node:
+		print("RecipeList class: ", node.get_class())
+	# Debug node paths
+	print("\n--- NODE PATH DEBUG ---")
+	print("Background found: ", background != null)
+	print("Main panel found: ", main_panel != null)
+	print("Recipe container found: ", recipe_container != null)
+	print("Close button found: ", close_button != null)
+	print("Title label found: ", title_label != null)
+	
+	if recipe_container:
+		print("Recipe container name: ", recipe_container.name)
+		print("Recipe container class: ", recipe_container.get_class())
+		print("Recipe container path: ", recipe_container.get_path())
+	else:
+		print("ERROR: recipe_container is NULL!")
+		print("Checking alternative paths...")
+		
+		# Check each step of the path
+		var scroll_container = get_node_or_null("ScrollContainer")
+		print("ScrollContainer found: ", scroll_container != null)
+		
+		if scroll_container:
+			var panel = scroll_container.get_node_or_null("Panel")
+			print("Panel found: ", panel != null)
+			
+			if panel:
+				var margin = panel.get_node_or_null("MarginContainer")
+				print("MarginContainer found: ", margin != null)
+				
+				if margin:
+					var vbox = margin.get_node_or_null("VBoxContainer")
+					print("VBoxContainer found: ", vbox != null)
+					
+					if vbox:
+						print("VBoxContainer children:")
+						for child in vbox.get_children():
+							print("  - ", child.name, " (", child.get_class(), ")")
+						
+						var inner_scroll = vbox.get_node_or_null("ScrollContainer")
+						print("Inner ScrollContainer found: ", inner_scroll != null)
+						
+						if inner_scroll:
+							var recipe_list = inner_scroll.get_node_or_null("RecipeList")
+							print("RecipeList found: ", recipe_list != null)
+							if recipe_list:
+								print("RecipeList class: ", recipe_list.get_class())
+	
+	print("=== CRAFTING UI DEBUG END ===\n")
+	
+	# Continue with normal setup
 	visible = false
 	setup_ui_style()
 	
 	if close_button:
 		close_button.pressed.connect(_on_close_button_pressed)
+		print("Close button connected successfully")
+	else:
+		print("WARNING: Close button not found - cannot connect signal")
 	
 	if title_label:
 		title_label.text = "Crafting Bench"
 		title_label.add_theme_font_size_override("font_size", 24)
 		title_label.add_theme_color_override("font_color", Color.WHITE)
+		print("Title label configured successfully")
+	else:
+		print("WARNING: Title label not found")
 	
 	create_recipe_buttons()
-	print("CraftingUI initialized with ", recipes.size(), " recipes")
+	print("CraftingUI initialization complete!")
 
 func setup_ui_style():
+	print("Setting up UI style...")
+	
 	# Style the background overlay
 	if background:
 		background.color = Color(0, 0, 0, 0.5)  # Semi-transparent black
 		background.mouse_filter = Control.MOUSE_FILTER_STOP  # Block clicks behind UI
+		print("Background styled successfully")
+	else:
+		print("WARNING: Background not found for styling")
 	
 	# Style the main panel
 	if main_panel:
@@ -113,6 +163,9 @@ func setup_ui_style():
 		panel_style.shadow_size = 10
 		panel_style.shadow_offset = Vector2(0, 5)
 		main_panel.add_theme_stylebox_override("panel", panel_style)
+		print("Main panel styled successfully")
+	else:
+		print("WARNING: Main panel not found for styling")
 	
 	# Style close button
 	if close_button:
@@ -133,21 +186,45 @@ func setup_ui_style():
 		close_button.add_theme_stylebox_override("normal", button_style_normal)
 		close_button.add_theme_stylebox_override("hover", button_style_hover)
 		close_button.add_theme_stylebox_override("pressed", button_style_hover)
+		print("Close button styled successfully")
 
 func set_player(player_ref):
+	print("Setting player reference: ", player_ref.name if player_ref else "NULL")
 	player = player_ref
 	refresh_recipes()
 
 func create_recipe_buttons():
-	if recipe_container:
-		for child in recipe_container.get_children():
-			child.queue_free()
+	print("\n--- RECIPE CREATION DEBUG ---")
+	print("Starting recipe button creation...")
+	print("Recipe container exists: ", recipe_container != null)
+	
+	if not recipe_container:
+		print("CRITICAL ERROR: Cannot create recipe buttons - recipe_container is NULL!")
+		print("The UI will appear empty!")
+		return
+	
+	print("Clearing existing children from recipe container...")
+	for child in recipe_container.get_children():
+		print("  Removing child: ", child.name)
+		child.queue_free()
+	
+	print("Creating buttons for ", recipes.size(), " recipes...")
+	var buttons_created = 0
 	
 	for recipe_id in recipes:
+		print("  Creating button for recipe: ", recipe_id)
 		var recipe_data = recipes[recipe_id]
 		create_recipe_button(recipe_id, recipe_data)
+		buttons_created += 1
+		print("    Button created successfully for: ", recipe_data.name)
+	
+	print("Recipe buttons creation complete! Created ", buttons_created, " buttons")
+	print("Recipe container now has ", recipe_container.get_child_count(), " children")
+	print("--- RECIPE CREATION DEBUG END ---\n")
 
 func create_recipe_button(recipe_id: String, recipe_data: Dictionary):
+	print("Creating detailed recipe button for: ", recipe_id)
+	
 	# Main container with margin
 	var recipe_margin = MarginContainer.new()
 	recipe_margin.set("theme_override_constants/margin_left", 5)
@@ -205,10 +282,15 @@ func create_recipe_button(recipe_id: String, recipe_data: Dictionary):
 	icon.anchors_preset = Control.PRESET_FULL_RECT
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.expand_mode = TextureRect.EXPAND_KEEP_SIZE
+	
+	# Try to load icon, use fallback if not found
 	if FileAccess.file_exists(recipe_data.icon):
 		icon.texture = load(recipe_data.icon)
+		print("    Loaded icon: ", recipe_data.icon)
 	else:
 		icon.texture = load("res://icon.png")
+		print("    Icon not found, using fallback: ", recipe_data.icon)
+	
 	icon_bg.add_child(icon)
 	
 	# Info container
@@ -273,8 +355,12 @@ func create_recipe_button(recipe_id: String, recipe_data: Dictionary):
 	recipe_panel.set_meta("materials_label", materials_label)
 	recipe_panel.set_meta("panel_style", style)
 	
+	# Add to recipe container
 	if recipe_container:
 		recipe_container.add_child(recipe_margin)
+		print("    Recipe button added to container successfully")
+	else:
+		print("    ERROR: Cannot add recipe button - recipe_container is NULL!")
 
 func get_materials_text_rich(materials: Dictionary) -> String:
 	var text = "[color=#aaaaaa]Required: [/color]"
@@ -294,8 +380,12 @@ func get_materials_text_rich(materials: Dictionary) -> String:
 	return text
 
 func refresh_recipes():
+	print("Refreshing recipes...")
 	if not recipe_container or not player:
+		print("Cannot refresh - recipe_container: ", recipe_container != null, " player: ", player != null)
 		return
+	
+	print("Updating ", recipe_container.get_child_count(), " recipe buttons...")
 	
 	for child in recipe_container.get_children():
 		var panel = child.get_child(0) if child.get_child_count() > 0 else null
@@ -315,6 +405,8 @@ func refresh_recipes():
 				if craft_button:
 					craft_button.disabled = not can_craft
 					craft_button.modulate = Color.WHITE if can_craft else Color(0.5, 0.5, 0.5)
+	
+	print("Recipe refresh complete!")
 
 func can_player_craft(recipe_id: String) -> bool:
 	if not player or not player.has_method("has_material"):
@@ -337,6 +429,7 @@ func _on_craft_button_pressed(recipe_id: String):
 	craft_item_requested.emit(recipe_id)
 
 func _on_close_button_pressed():
+	print("Close button pressed")
 	close_requested.emit()
 
 func _input(event):

@@ -377,7 +377,6 @@ shake_duration = 0.2
 follow_target = NodePath("..")
 
 [node name="UI" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="HealthBarBG" type="TextureRect" parent="UI"]
 offset_right = 125.0

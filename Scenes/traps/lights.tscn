@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://bhcshbd3ry6oe"]
 
-[ext_resource type="Script" uid="uid://cpvp114paas0a" path="res://Scenes/traps/lights.gd" id="1_b13hf"]
+[ext_resource type="Script" uid="uid://cpvp114paas0a" path="res://Script/traps scripts/lights.gd" id="1_b13hf"]
 [ext_resource type="Texture2D" uid="uid://c0bf0jv5wjygg" path="res://assets/traps/chm3a-Sheet-export.png" id="1_q3r61"]
 [ext_resource type="Texture2D" uid="uid://e4ps7fdpw3ri" path="res://assets/Characters/light player.png" id="3_rt8xn"]
 [ext_resource type="Texture2D" uid="uid://bskymb56pttf" path="res://icon.svg" id="4_m4wxr"]

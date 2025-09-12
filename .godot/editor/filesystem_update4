@@ -1,7 +1,8 @@
-res://Scenes/traps/tornado.tscn
-res://Scenes/traps/lights.tscn
-res://Scenes/player and monsters scenes/player.tscn
 res://Scenes/Levels/level 1.tscn
+res://Scenes/traps/lizer.tscn
+res://Scenes/traps/lights.tscn
+res://Scenes/traps/tornado.tscn
+res://Scenes/player and monsters scenes/player.tscn
 res://Scenes/Levels/level 2.tscn
 res://Scenes/Crafting Room.tscn
 res://Scenes/ui crafting/CraftingUI.tscn
@@ -9,6 +10,4 @@ res://Scenes/traps/spike.tscn
 res://Scenes/BOSSES/BOSS1.tscn
 res://Scenes/player and monsters scenes/enemy.tscn
 res://Scenes/traps/poison trap.tscn
-res://Scenes/traps/lizer.tscn
-res://Scenes/traps/lights.gd
-res://Script/enemy scripts/enemy.gd
+res://Scenes/ui crafting/crafting_ui.gd
